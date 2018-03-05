@@ -11,10 +11,24 @@ export default class World {
         return this._objects;
     }
 
-    constructor({ level, people, objects }) {
+    get hero() {
+        return this._hero;
+    }
+
+    get path() {
+        return this._path;
+    }
+
+    set path(p) {
+        this._path = p;
+    }
+
+    constructor({ level, people, objects, hero, path }) {
         this._level = level;
         this._people = people;
         this._objects = objects;
+        this._hero = hero;
+        this._path = path;
     }
 
     tick() {

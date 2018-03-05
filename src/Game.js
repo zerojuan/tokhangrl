@@ -44,6 +44,7 @@ export default class Game extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        this.mainScene.updatePath(nextProps.world.path);
         if (nextProps.turn !== this.props.turn) {
             this.mainScene.setTurn(nextProps.turn);
             this.mainScene.updateWorld(nextProps.world);

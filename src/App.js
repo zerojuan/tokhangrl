@@ -5,6 +5,7 @@ import Game from "./Game";
 import StoryLog from "./StoryLog";
 
 import { describeWorld } from "./RL/Description";
+import { findPath } from "./RL/Pathfinder";
 import WorldGenerator from "./RL/WorldGenerator";
 
 export default class App extends React.Component {
@@ -30,10 +31,24 @@ export default class App extends React.Component {
 
     handleHovered(x, y) {
         // check if this is part of the world
-        if (this.state.world.level[y][x] !== undefined) {
-            this.setState(prevState => ({
-                currentHovered: describeWorld(prevState.world.level[y][x])
-            }));
+        if (this.state.world.level[x][y] !== undefined) {
+            this.setState(prevState => {
+                const path = findPath(
+                    {
+                        row: 5,
+                        col: 5
+                    },
+                    {
+                        row: y,
+                        col: x
+                    },
+                    prevState.world.level
+                );
+                prevState.world.path = path;
+                return {
+                    currentHovered: describeWorld(prevState.world.level[x][y])
+                };
+            });
         }
     }
 

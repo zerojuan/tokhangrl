@@ -6,6 +6,7 @@ export const DOOR = 1;
 export const DOOR_OPEN = 2;
 export const ROAD = 3;
 export const DIRT_ROAD = 4;
+export const BLOCK = 5;
 
 export const N = 0;
 export const S = 1;

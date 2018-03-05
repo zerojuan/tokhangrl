@@ -15,14 +15,15 @@ import {
 
 import People from "./People";
 import World from "./World";
+import Hero from "./Hero";
 
 function generate() {
     const level = [];
 
-    for (let y = 0; y < ROWS; y++) {
+    for (let x = 0; x < COLS; x++) {
         level.push([]);
-        for (let x = 0; x < COLS; x++) {
-            level[y].push(DIRT_ROAD);
+        for (let y = 0; y < ROWS; y++) {
+            level[x].push(DIRT_ROAD);
         }
     }
 
@@ -44,10 +45,13 @@ function generate() {
 
     const objects = [];
 
+    const hero = new Hero({ x: 5, y: 5 });
+
     return new World({
         level: level,
         people: people,
-        objects: objects
+        objects: objects,
+        hero: hero
     });
 }
 
@@ -60,25 +64,25 @@ function createRoad(level, x, y, direction, width, length) {
     if (direction === N) {
         for (; iX < x + width; iX++) {
             for (iY = startY; iY > y - length; iY--) {
-                level[iY][iX] = ROAD;
+                level[iX][iY] = ROAD;
             }
         }
     } else if (direction === S) {
         for (; iX < x + width; iX++) {
             for (iY = startY; iY < y + length; iY++) {
-                level[iY][iX] = ROAD;
+                level[iX][iY] = ROAD;
             }
         }
     } else if (direction === E) {
         for (; iX < x + length; iX++) {
             for (iY = startY; iY < y + width; iY++) {
-                level[iY][iX] = ROAD;
+                level[iX][iY] = ROAD;
             }
         }
     } else if (direction === W) {
         for (; iX > x - length; iX--) {
             for (iY = startY; iY < y + width; iY++) {
-                level[iY][iX] = ROAD;
+                level[iX][iY] = ROAD;
             }
         }
     }
