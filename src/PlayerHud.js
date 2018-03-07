@@ -10,7 +10,18 @@ export default class PlayerHud extends React.Component {
             <div style={style}>
                 Player Details:
                 <button onClick={this.props.nextTurn}>Update</button>
-                <p>What:{this.props.tileInfo}</p>
+                {this.props.tileInfo ? (
+                    <div>
+                        <p>What:{this.props.tileInfo.tile.description}</p>
+                        <p>
+                            Who:{this.props.tileInfo.person
+                                ? this.props.tileInfo.person.name
+                                : "None"}
+                        </p>
+                    </div>
+                ) : (
+                    <p>??</p>
+                )}
             </div>
         );
     }

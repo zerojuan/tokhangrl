@@ -10,4 +10,9 @@ export default class Hero {
         this.x = x;
         this.y = y;
     }
+
+    move(currentMove) {
+        this.x = currentMove.col;
+        this.y = currentMove.row;
+    }
 }

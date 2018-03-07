@@ -62,7 +62,13 @@ class MainScene extends Phaser.Scene {
             for (let y = 0; y < 45; y++) {
                 this.tiles[x].push(
                     this.add
-                        .image(x * 8, y * 12, "atlas", this.world.level[x][y])
+                        .image(
+                            x * 8,
+                            y * 12,
+                            "atlas",
+                            this.world.level[x][y].value
+                        )
+                        .setAlpha(0)
                         .setOrigin(0, 0)
                 );
             }
@@ -133,13 +139,35 @@ class MainScene extends Phaser.Scene {
     updateWorld(world) {
         for (let y = 0; y < 45; y++) {
             for (let x = 0; x < 160; x++) {
-                this.tiles[x][y].setTexture("atlas", world.level[x][y]);
+                this.tiles[x][y].setTexture("atlas", world.level[x][y].value);
+                if (world.level[x][y].visibility === 1) {
+                    this.tweens.add({
+                        targets: this.tiles[x][y],
+                        alpha: world.level[x][y].visibility,
+                        ease: "Power1",
+                        duration: 250
+                    });
+                } else {
+                    this.tiles[x][y].setAlpha(world.level[x][y].visibility);
+                }
+
+                //
             }
         }
 
         world.people.forEach((person, i) => {
             this.characters[i].x = person.x * 8;
             this.characters[i].y = person.y * 12;
+        });
+
+        // this.hero.x = this.world.hero.x * 8;
+        // this.hero.y = this.world.hero.y * 12;
+        this.tweens.add({
+            targets: this.hero,
+            x: this.world.hero.x * 8,
+            y: this.world.hero.y * 12,
+            ease: "Power1",
+            duration: 150
         });
     }
 
@@ -149,7 +177,9 @@ class MainScene extends Phaser.Scene {
         for (let y = 0; y < 45; y++) {
             for (let x = 0; x < 160; x++) {
                 if (this.tiles[x][y]) {
-                    this.tiles[x][y].setAlpha(1);
+                    this.tiles[x][y].setAlpha(
+                        this.world.level[x][y].visibility
+                    );
                 }
             }
         }

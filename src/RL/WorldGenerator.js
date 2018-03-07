@@ -16,6 +16,7 @@ import {
 import People from "./People";
 import World from "./World";
 import Hero from "./Hero";
+import Tile from "./Tile";
 
 function generate() {
     const level = [];
@@ -23,12 +24,21 @@ function generate() {
     for (let x = 0; x < COLS; x++) {
         level.push([]);
         for (let y = 0; y < ROWS; y++) {
-            level[x].push(DIRT_ROAD);
+            level[x].push(
+                new Tile({
+                    visibility: 0.2,
+                    solid: false,
+                    ground: true,
+                    value: DIRT_ROAD
+                })
+            );
         }
     }
 
     createRoad(level, 0, 25, E, 4, 160);
     createRoad(level, COLS / 2, 0, S, 2, 45);
+
+    createRoom(level, 15, 15, 20, 5);
 
     const people = [];
 
@@ -45,7 +55,7 @@ function generate() {
 
     const objects = [];
 
-    const hero = new Hero({ x: 5, y: 5 });
+    const hero = new Hero({ x: 25, y: 25 });
 
     return new World({
         level: level,
@@ -53,6 +63,17 @@ function generate() {
         objects: objects,
         hero: hero
     });
+}
+
+function createRoom(level, x, y, width, height) {
+    // create walls
+    for (let iX = x; iX < x + width; iX++) {
+        for (let iY = y; iY < y + height; iY++) {
+            level[iX][iY].value = WALL;
+            level[iX][iY].solid = true;
+            level[iX][iY].ground = false;
+        }
+    }
 }
 
 function createRoad(level, x, y, direction, width, length) {
@@ -64,25 +85,25 @@ function createRoad(level, x, y, direction, width, length) {
     if (direction === N) {
         for (; iX < x + width; iX++) {
             for (iY = startY; iY > y - length; iY--) {
-                level[iX][iY] = ROAD;
+                level[iX][iY].value = ROAD;
             }
         }
     } else if (direction === S) {
         for (; iX < x + width; iX++) {
             for (iY = startY; iY < y + length; iY++) {
-                level[iX][iY] = ROAD;
+                level[iX][iY].value = ROAD;
             }
         }
     } else if (direction === E) {
         for (; iX < x + length; iX++) {
             for (iY = startY; iY < y + width; iY++) {
-                level[iX][iY] = ROAD;
+                level[iX][iY].value = ROAD;
             }
         }
     } else if (direction === W) {
         for (; iX > x - length; iX--) {
             for (iY = startY; iY < y + width; iY++) {
-                level[iX][iY] = ROAD;
+                level[iX][iY].value = ROAD;
             }
         }
     }

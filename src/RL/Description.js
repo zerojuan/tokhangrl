@@ -1,12 +1,13 @@
-import { DOOR, ROAD, DIRT_ROAD } from "../constants";
+export function describeWorld(world, x, y) {
+    const tile = world.level[x][y];
 
-export function describeWorld(object) {
-    switch (object) {
-        case DOOR:
-            return "A door";
-        case ROAD:
-            return "A road";
-        case DIRT_ROAD:
-            return "A dirt road";
-    }
+    // search the characters if in the same tile
+    const person = world.people.find(person => {
+        return person.position.x === x && person.position.y === y;
+    });
+
+    return {
+        tile,
+        person
+    };
 }

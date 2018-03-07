@@ -51,18 +51,21 @@ function getNeighbors(node, map) {
         [-1, -1]
     ];
     for (let i = 0; i < 8; i++) {
-        if (
-            node.col + dir[i][0] < 0 ||
-            node.col + dir[i][0] > map[0].length - 1
-        )
+        if (node.col + dir[i][0] < 0 || node.col + dir[i][0] > map.length - 1)
             continue;
-        if (node.row + dir[i][1] < 0 || node.row + dir[i][1] > map.length - 1)
+
+        if (
+            node.row + dir[i][1] < 0 ||
+            node.row + dir[i][1] > map[0].length - 1
+        )
             continue;
 
         //console.log("(", node.col, node.row, ")(", node.col+dir[i][0], node.row+dir[i][1], ")");
-        const p = map[node.row + dir[i][1]][node.col + dir[i][0]];
+        const p = map[node.col + dir[i][0]][node.row + dir[i][1]];
 
-        if (p.solid) continue;
+        if (!p || p.solid) {
+            continue;
+        }
 
         n.push({
             pos: {
@@ -77,7 +80,7 @@ function getNeighbors(node, map) {
 function getOldValue(node, array) {
     for (let i = 0; i < array.length; i++) {
         let item = array[i];
-        if (item.pos.col == node.pos.col && item.pos.row == node.pos.row) {
+        if (item.pos.col === node.pos.col && item.pos.row === node.pos.row) {
             return item;
         }
     }
@@ -107,6 +110,10 @@ export function findPath(start, end, map) {
         parent: null
     });
 
+    if (!map[end.col][end.row] || map[end.col][end.row].solid) {
+        return null;
+    }
+
     var pathFound = false;
     while (OPEN.length > 0) {
         current = OPEN.pop();
@@ -117,6 +124,7 @@ export function findPath(start, end, map) {
         }
         CLOSED.push(current);
         var neighbors = getNeighbors(current.pos, map);
+
         for (var i = 0; i < neighbors.length; i++) {
             var neighbor = neighbors[i];
             // cost = g(current) + movementcost(current, neighbor)
@@ -151,9 +159,8 @@ export function findPath(start, end, map) {
         }
     }
 
-    //		reconstruct reverse path from goal to start
+    // reconstruct reverse path from goal to start
     if (pathFound) {
-        console.log("Path found!");
         var path = [];
         path.push(current.pos);
         while (current.parent) {
@@ -165,7 +172,6 @@ export function findPath(start, end, map) {
 
         return path;
     } else {
-        console.log("Path Not Found!");
         return null;
     }
 }

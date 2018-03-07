@@ -1,6 +1,7 @@
 import { N, S, E, W, ROWS, COLS } from "../constants";
 
 export default class People {
+    name = "None";
     constructor({ name, type, x, y }) {
         this.name = name;
         this.x = x;

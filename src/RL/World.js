@@ -29,11 +29,28 @@ export default class World {
         this._objects = objects;
         this._hero = hero;
         this._path = path;
+
+        this.currentIndex = 0;
+    }
+
+    startLongMove() {
+        this.currentIndex = 0;
     }
 
     tick() {
-        this._people.forEach(person => {
-            person.moveRandom();
-        });
+        if (!this._path) {
+            return false;
+        }
+        const currentMove = this._path[this.currentIndex];
+        if (currentMove) {
+            // this._people.forEach(person => {
+            //     person.moveRandom();
+            // });
+
+            this._hero.move(currentMove);
+            this.currentIndex++;
+            return true;
+        }
+        return false;
     }
 }
