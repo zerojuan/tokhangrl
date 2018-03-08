@@ -37,20 +37,48 @@ export default class World {
         this.currentIndex = 0;
     }
 
-    tick() {
-        if (!this._path) {
-            return false;
-        }
-        const currentMove = this._path[this.currentIndex];
-        if (currentMove) {
-            // this._people.forEach(person => {
-            //     person.moveRandom();
-            // });
+    getPerson(x, y) {
+        return this._people.find(person => {
+            return person.x === x && person.y === y;
+        });
+    }
 
-            this._hero.move(currentMove);
-            this.currentIndex++;
-            return true;
+    clickedAdjacent(x, y) {
+        return (
+            Math.abs(this._hero.x - x) <= 1 && Math.abs(this._hero.y - y) <= 1
+        );
+    }
+
+    tick() {
+        let isMoving = false;
+        let history = [];
+
+        if (!this._path) {
+            isMoving = false;
+        } else {
+            const currentMove = this._path[this.currentIndex];
+            if (currentMove) {
+                if (this.getPerson(currentMove.col, currentMove.row)) {
+                    isMoving = false;
+                } else {
+                    this._hero.move(currentMove);
+                    this.currentIndex++;
+                    isMoving = true;
+                }
+            }
         }
-        return false;
+
+        this._people.forEach(person => {
+            const actionResult = person.do(this);
+            if (actionResult) {
+                history.push(actionResult);
+            }
+        });
+
+        console.log("Did I move", history);
+        return {
+            isMoving,
+            history
+        };
     }
 }

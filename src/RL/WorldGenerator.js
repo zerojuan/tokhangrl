@@ -13,6 +13,8 @@ import {
     MAN
 } from "../constants";
 
+import Names from "./data/Names";
+
 import People from "./People";
 import World from "./World";
 import Hero from "./Hero";
@@ -44,8 +46,12 @@ function generate() {
 
     // create random people
     for (let i = 0; i < 15; i++) {
+        const randomFirstName =
+            Names.maleNames[Math.floor(Math.random() * Names.maleNames.length)];
+        const randomLastName =
+            Names.lastNames[Math.floor(Math.random() * Names.lastNames.length)];
         const person = new People({
-            name: "John",
+            name: `${randomFirstName} ${randomLastName}`,
             type: MAN,
             x: Math.floor(Math.random() * COLS),
             y: Math.floor(Math.random() * ROWS)

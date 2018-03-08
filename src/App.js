@@ -18,7 +18,13 @@ export default class App extends React.Component {
             turn: 0,
             world: WorldGenerator.generate(),
             currentHovered: null,
-            isMoving: false
+            isMoving: false,
+            activeAction: null,
+            history: [
+                {
+                    msg: "It's a new day. In Sta. Ana"
+                }
+            ]
         };
         doLOS(
             { row: this.state.world.hero.x, col: this.state.world.hero.y },
@@ -28,7 +34,7 @@ export default class App extends React.Component {
     }
 
     doMove = () => {
-        const isMoving = this.state.world.tick();
+        const { isMoving, history } = this.state.world.tick();
         if (isMoving) {
             this.setState(prevState => {
                 doLOS(
@@ -41,21 +47,45 @@ export default class App extends React.Component {
                 );
                 return {
                     turn: prevState.turn + 1,
-                    isMoving: isMoving
+                    isMoving: isMoving,
+                    activeAction: null,
+                    history: [...prevState.history, ...history]
                 };
             });
             setTimeout(this.doMove, 200);
         } else {
-            this.setState({
-                isMoving: false
+            this.setState(prevState => {
+                return {
+                    turn: prevState.turn + 1,
+                    isMoving: false,
+                    activeAction: null,
+                    history: [...prevState.history, ...history]
+                };
             });
         }
     };
 
-    handleNextTurn() {
+    handleNextTurn({ x, y }) {
         if (this.state.isMoving) {
+            this.state.world.path = [];
             return;
         }
+
+        // check if clicked a person
+        // if clicked on someone right next to me
+        if (this.state.world.clickedAdjacent(x, y)) {
+            const person = this.state.world.getPerson(x, y);
+            if (person) {
+                // show actions panel
+                this.setState({
+                    activeAction: person
+                });
+                return;
+            }
+
+            // if door?
+        }
+
         this.state.world.startLongMove();
         this.doMove();
     }
@@ -67,6 +97,11 @@ export default class App extends React.Component {
                 if (prevState.isMoving) {
                     return;
                 }
+
+                if (prevState.activeAction) {
+                    return;
+                }
+
                 const path = findPath(
                     {
                         row: prevState.world.hero.y,
@@ -86,6 +121,18 @@ export default class App extends React.Component {
         }
     }
 
+    handleAction = action => {
+        // this.setState(prevState => {
+        //     // if ( action === ACTIVATE)
+        //     prevState.activeAction.registerAction(action);
+        //     return {
+        //         activeAction: null
+        //     };
+        // });
+        this.state.activeAction.registerAction(action);
+        this.doMove();
+    };
+
     render() {
         return (
             <div className="container">
@@ -97,10 +144,15 @@ export default class App extends React.Component {
                 />
                 <PlayerHud
                     turn={this.state.turn}
+                    hero={this.state.world.hero}
                     tileInfo={this.state.currentHovered}
                     nextTurn={this.handleNextTurn}
                 />
-                <StoryLog />
+                <StoryLog
+                    activeAction={this.state.activeAction}
+                    history={this.state.history}
+                    onAction={this.handleAction}
+                />
             </div>
         );
     }

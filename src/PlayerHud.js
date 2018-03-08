@@ -8,8 +8,7 @@ export default class PlayerHud extends React.Component {
     render() {
         return (
             <div style={style}>
-                Player Details:
-                <button onClick={this.props.nextTurn}>Update</button>
+                Player Details: {this.props.hero.gunAimed ? "Ready" : "Tucked"}
                 {this.props.tileInfo ? (
                     <div>
                         <p>What:{this.props.tileInfo.tile.description}</p>

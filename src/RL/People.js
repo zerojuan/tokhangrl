@@ -7,6 +7,8 @@ export default class People {
         this.x = x;
         this.y = y;
         this.type = type;
+
+        this.activeAction = null;
     }
 
     moveRandom() {
@@ -24,6 +26,28 @@ export default class People {
             this.x = Math.min(COLS - 1, this.x + 1);
         } else if (direction === W) {
             this.x = Math.max(0, this.x - 1);
+        }
+    }
+
+    registerAction(action) {
+        this.activeAction = action;
+    }
+
+    do(world) {
+        if (this.activeAction) {
+            // better send a history report
+
+            const message = {
+                msg: `${this.name} reacted to ${this.activeAction}`
+            };
+            this.activeAction = null;
+            return message;
+        } else {
+            if (Math.random() * 50 < 25) {
+                this.moveRandom();
+                return { msg: `${this.name} has moved randomly` };
+            }
+            return null;
         }
     }
 

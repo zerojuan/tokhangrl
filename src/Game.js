@@ -35,7 +35,10 @@ export default class Game extends React.Component {
     }
 
     handleClick(x, y) {
-        this.props.nextTurn();
+        this.props.nextTurn({
+            x: x,
+            y: y
+        });
     }
 
     handleHover(x, y) {

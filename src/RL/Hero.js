@@ -1,4 +1,7 @@
 export default class Hero {
+    gunAimed = false;
+    items = [];
+
     get position() {
         return {
             x: this.x,
