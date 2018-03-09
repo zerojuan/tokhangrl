@@ -1,6 +1,10 @@
 export default class Hero {
     gunAimed = false;
     items = [];
+    kills = 0;
+    missions = 0;
+    ammo = 9;
+    name = "??? ???";
 
     get position() {
         return {

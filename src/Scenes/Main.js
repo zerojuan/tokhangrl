@@ -24,6 +24,7 @@ class MainScene extends Phaser.Scene {
         this.world = world;
 
         this.tiles = null;
+        this.pathTiles = [];
         this.characters = null;
 
         this.pointer = null;
@@ -70,8 +71,19 @@ class MainScene extends Phaser.Scene {
                         )
                         .setAlpha(0)
                         .setOrigin(0, 0)
+                        .setTint(0x00ff00)
                 );
             }
+        }
+        this.pathTiles = [];
+        for (let x = 0; x < 120; x++) {
+            this.pathTiles.push(
+                this.add
+                    .image(-5 * 8, -5 * 12, "atlas", 6)
+                    .setAlpha(0)
+                    .setOrigin(0, 0)
+                    .setTint(0x0000ff)
+            );
         }
         this.characters = this.world.people.map(person => {
             return this.add
@@ -150,8 +162,6 @@ class MainScene extends Phaser.Scene {
                 } else {
                     this.tiles[x][y].setAlpha(world.level[x][y].visibility);
                 }
-
-                //
             }
         }
 
@@ -184,8 +194,19 @@ class MainScene extends Phaser.Scene {
             }
         }
 
-        path.forEach(node => {
-            this.tiles[node.col][node.row].setAlpha(0.1);
+        this.pathTiles.forEach((pathTile, i) => {
+            if (i >= this.world.currentIndex && i < path.length) {
+                pathTile.x = path[i].col * 8;
+                pathTile.y = path[i].row * 12;
+                pathTile.setAlpha(1);
+                if (this.world.hero.gunAimed) {
+                    pathTile.setTint(0xff0000);
+                } else {
+                    pathTile.setTint(0x0000ff);
+                }
+            } else {
+                pathTile.setAlpha(0);
+            }
         });
     }
 }

@@ -5,11 +5,15 @@ export default class Tile {
     solid = false;
     ground = true;
     value = -1;
+    x = 0;
+    y = 0;
 
-    constructor({ visibility, solid, value }) {
+    constructor({ visibility, solid, value, x, y }) {
         this.visibility = visibility;
         this.solid = solid;
         this.value = value;
+        this.x = x;
+        this.y = y;
     }
 
     get description() {

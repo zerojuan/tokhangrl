@@ -31,7 +31,9 @@ function generate() {
                     visibility: 0.2,
                     solid: false,
                     ground: true,
-                    value: DIRT_ROAD
+                    value: DIRT_ROAD,
+                    x: x,
+                    y: y
                 })
             );
         }

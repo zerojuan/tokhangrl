@@ -1,4 +1,6 @@
 import React from "react";
+import { Layout, Affix } from "antd";
+const { Footer, Sider, Content } = Layout;
 
 import PlayerHud from "./PlayerHud";
 import Game from "./Game";
@@ -6,8 +8,9 @@ import StoryLog from "./StoryLog";
 
 import { describeWorld } from "./RL/Description";
 import { findPath } from "./RL/Pathfinder";
-import { doLOS } from "./RL/LineOfSight";
+import { doLOS, calculateLine } from "./RL/LineOfSight";
 import WorldGenerator from "./RL/WorldGenerator";
+import { CANCEL } from "./constants";
 
 export default class App extends React.Component {
     constructor(props) {
@@ -55,6 +58,7 @@ export default class App extends React.Component {
             setTimeout(this.doMove, 200);
         } else {
             this.setState(prevState => {
+                prevState.world.path = [];
                 return {
                     turn: prevState.turn + 1,
                     isMoving: false,
@@ -72,18 +76,38 @@ export default class App extends React.Component {
         }
 
         // check if clicked a person
-        // if clicked on someone right next to me
-        if (this.state.world.clickedAdjacent(x, y)) {
+        if (this.state.world.hero.gunAimed) {
+            // if clicked on someone
             const person = this.state.world.getPerson(x, y);
             if (person) {
-                // show actions panel
                 this.setState({
                     activeAction: person
                 });
                 return;
             }
+        } else {
+            // if clicked on someone right next to me
+            if (this.state.world.clickedAdjacent(x, y)) {
+                if (this.state.world.clickedEdge(x, y)) {
+                    this.setState({
+                        activeAction: {
+                            type: "exit"
+                        }
+                    });
+                    return;
+                }
 
-            // if door?
+                const person = this.state.world.getPerson(x, y);
+                if (person) {
+                    // show actions panel
+                    this.setState({
+                        activeAction: person
+                    });
+                    return;
+                }
+
+                // if door?
+            }
         }
 
         this.state.world.startLongMove();
@@ -102,57 +126,111 @@ export default class App extends React.Component {
                     return;
                 }
 
-                const path = findPath(
-                    {
-                        row: prevState.world.hero.y,
-                        col: prevState.world.hero.x
-                    },
-                    {
-                        row: y,
-                        col: x
-                    },
-                    prevState.world.level
-                );
+                let path;
+                const tile = prevState.world.level[x][y];
+                if (prevState.world.hero.gunAimed) {
+                    // aiming mode (only show paths within radius)
+
+                    if (tile.visibility === 1) {
+                        path = calculateLine(
+                            {
+                                row: prevState.world.hero.y,
+                                col: prevState.world.hero.x
+                            },
+                            {
+                                row: y,
+                                col: x
+                            }
+                        );
+                    }
+                } else {
+                    if (tile.visibility >= 0.5) {
+                        path = findPath(
+                            {
+                                row: prevState.world.hero.y,
+                                col: prevState.world.hero.x
+                            },
+                            {
+                                row: y,
+                                col: x
+                            },
+                            prevState.world.level
+                        );
+                    }
+                }
                 prevState.world.path = path;
                 return {
-                    currentHovered: describeWorld(prevState.world, x, y)
+                    currentHovered: describeWorld(prevState.world, x, y),
+                    world: prevState.world
                 };
             });
         }
     }
 
     handleAction = action => {
-        // this.setState(prevState => {
-        //     // if ( action === ACTIVATE)
-        //     prevState.activeAction.registerAction(action);
-        //     return {
-        //         activeAction: null
-        //     };
-        // });
-        this.state.activeAction.registerAction(action);
-        this.doMove();
+        if (action !== CANCEL) {
+            if (this.state.activeAction.type === "exit") {
+                this.setState({
+                    activeAction: null
+                });
+            } else {
+                this.state.activeAction.registerAction(action);
+                this.doMove();
+            }
+        } else {
+            this.setState({
+                activeAction: null
+            });
+        }
+    };
+
+    handleGunToggled = () => {
+        this.state.world.path = [];
+        this.state.world.hero.gunAimed = !this.state.world.hero.gunAimed;
+        const { history } = this.state.world.tick();
+        this.setState(prevState => {
+            return {
+                turn: prevState.turn + 1,
+                isMoving: false,
+                activeAction: null,
+                history: [...prevState.history, ...history]
+            };
+        });
     };
 
     render() {
         return (
-            <div className="container">
-                <Game
-                    turn={this.state.turn}
-                    world={this.state.world}
-                    nextTurn={this.handleNextTurn}
-                    hovered={this.handleHovered}
-                />
-                <PlayerHud
-                    turn={this.state.turn}
-                    hero={this.state.world.hero}
-                    tileInfo={this.state.currentHovered}
-                    nextTurn={this.handleNextTurn}
-                />
-                <StoryLog
-                    activeAction={this.state.activeAction}
-                    history={this.state.history}
-                    onAction={this.handleAction}
-                />
+            <div>
+                <Layout>
+                    <Layout>
+                        <Content>
+                            <Game
+                                turn={this.state.turn}
+                                world={this.state.world}
+                                nextTurn={this.handleNextTurn}
+                                hovered={this.handleHovered}
+                            />
+                        </Content>
+
+                        <Footer style={{ padding: "6px 6px" }}>
+                            <StoryLog
+                                activeAction={this.state.activeAction}
+                                hero={this.state.world.hero}
+                                history={this.state.history}
+                                onAction={this.handleAction}
+                            />
+                        </Footer>
+                    </Layout>
+                    <Sider width={275} style={{ background: "none" }}>
+                        <PlayerHud
+                            turn={this.state.turn}
+                            hero={this.state.world.hero}
+                            onGunToggled={this.handleGunToggled}
+                            tileInfo={this.state.currentHovered}
+                            nextTurn={this.handleNextTurn}
+                        />
+                    </Sider>
+                </Layout>
             </div>
         );
     }

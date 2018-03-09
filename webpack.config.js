@@ -26,8 +26,16 @@ const config = {
                 include: APP_DIR
             },
             {
+                test: /\.css$/,
+                loaders: ["style-loader", "css-loader"]
+            },
+            {
                 test: [/\.vert$/, /\.frag$/],
                 use: ["raw-loader"]
+            },
+            {
+                test: /\.(ttf|eot|svg|woff|woff2)(\?.+)?$/,
+                loader: "file-loader?name=[hash:12].[ext]"
             }
         ]
     },

@@ -4,7 +4,7 @@ import Infinite from "react-infinite";
 import ActionSelection from "./components/ActionSelection";
 
 const style = {
-    flexGrow: 1
+    // padding: "6px 6px"
 };
 export default class StoryLog extends React.Component {
     constructor(props) {
@@ -24,13 +24,14 @@ export default class StoryLog extends React.Component {
             <div style={style}>
                 {this.props.activeAction ? (
                     <ActionSelection
+                        hero={this.props.hero}
                         activeAction={this.props.activeAction}
                         onAction={this.props.onAction}
                     />
                 ) : (
                     <Infinite
                         elementHeight={20}
-                        containerHeight={85}
+                        containerHeight={100}
                         displayBottomUpwards
                     >
                         {this.props.history.map((history, i) => {

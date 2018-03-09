@@ -18,3 +18,11 @@ export const WOMAN = 1;
 export const BOY = 2;
 export const GIRL = 3;
 export const HERO = 4;
+
+export const SHOOT = "shoot";
+export const FREEZE = "freeze";
+export const ARREST = "arrest";
+export const TALK = "talk";
+export const INTIMIDATE = "intimidate";
+export const CANCEL = "cancel";
+export const LEAVE = "leave";

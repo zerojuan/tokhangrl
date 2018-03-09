@@ -1,3 +1,4 @@
+export { COLS, ROWS } from "../constants";
 export default class World {
     get level() {
         return this._level;
@@ -37,6 +38,10 @@ export default class World {
         this.currentIndex = 0;
     }
 
+    setTarget(target) {
+        this._target = target;
+    }
+
     getPerson(x, y) {
         return this._people.find(person => {
             return person.x === x && person.y === y;
@@ -47,6 +52,10 @@ export default class World {
         return (
             Math.abs(this._hero.x - x) <= 1 && Math.abs(this._hero.y - y) <= 1
         );
+    }
+
+    clickedEdge(x, y) {
+        return x === 0 || y === 0 || x === COLS || y === ROWS;
     }
 
     tick() {
@@ -65,6 +74,8 @@ export default class World {
                     this.currentIndex++;
                     isMoving = true;
                 }
+            } else {
+                isMoving = false;
             }
         }
 
@@ -75,7 +86,10 @@ export default class World {
             }
         });
 
-        console.log("Did I move", history);
+        if (!isMoving) {
+            this.currentIndex = 0;
+        }
+
         return {
             isMoving,
             history

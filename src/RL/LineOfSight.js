@@ -1,6 +1,6 @@
 const fogIntensity = 0.5;
 
-function calculateLine(start, end) {
+export function calculateLine(start, end) {
     const points = [];
     let x0 = start.col;
     let y0 = start.row;

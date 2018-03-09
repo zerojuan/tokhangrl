@@ -2,6 +2,12 @@ import { N, S, E, W, ROWS, COLS } from "../constants";
 
 export default class People {
     name = "None";
+    age = 25;
+    occupation = {
+        type: 3,
+        name: "Housewife"
+    };
+
     constructor({ name, type, x, y }) {
         this.name = name;
         this.x = x;
@@ -43,10 +49,10 @@ export default class People {
             this.activeAction = null;
             return message;
         } else {
-            if (Math.random() * 50 < 25) {
-                this.moveRandom();
-                return { msg: `${this.name} has moved randomly` };
-            }
+            // if (Math.random() * 50 < 25) {
+            //     this.moveRandom();
+            //     return { msg: `${this.name} has moved randomly` };
+            // }
             return null;
         }
     }
