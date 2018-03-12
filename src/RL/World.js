@@ -1,4 +1,4 @@
-export { COLS, ROWS } from "../constants";
+import { COLS, ROWS } from "../constants";
 export default class World {
     get level() {
         return this._level;
@@ -45,6 +45,12 @@ export default class World {
     getPerson(x, y) {
         return this._people.find(person => {
             return person.x === x && person.y === y;
+        });
+    }
+
+    getObject(x, y) {
+        return this._objects.find(object => {
+            return object.x === x && object.y === y;
         });
     }
 

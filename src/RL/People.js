@@ -1,4 +1,5 @@
 import { N, S, E, W, ROWS, COLS } from "../constants";
+import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
 
 export default class People {
     name = "None";
@@ -62,5 +63,43 @@ export default class People {
             x: this.x,
             y: this.y
         };
+    }
+
+    get actionDescription() {
+        return `Person ${this.name}, what to do?`;
+    }
+
+    getActions(hero) {
+        const actions = [];
+        if (hero.gunAimed) {
+            actions.push({
+                type: "primary",
+                action: SHOOT,
+                text: "Shoot"
+            });
+            actions.push({
+                type: "primary",
+                action: FREEZE,
+                text: '"Halt!"'
+            });
+        } else {
+            actions.push({
+                type: "primary",
+                action: ARREST,
+                text: "Arrest"
+            });
+            actions.push({
+                type: "primary",
+                action: TALK,
+                text: "Talk"
+            });
+        }
+        actions.push({
+            type: "default",
+            action: CANCEL,
+            text: "Cancel"
+        });
+
+        return actions;
     }
 }

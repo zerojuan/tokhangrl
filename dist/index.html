@@ -14,6 +14,24 @@
             display: flex;
             flex-wrap: wrap;
         }
+
+        .levelclear-enter {
+            opacity: 0.01;
+        }
+
+        .levelclear-enter.levelclear-enter-active {
+            opacity: 1;
+            transition: opacity 500ms ease-in;
+        }
+
+        .levelclear-leave {
+            opacity: 1;
+        }
+
+        .levelclear-leave.levelclear-leave-active {
+            opacity: 0.1;
+            transition: opacity 300ms ease-in;
+        }
     </style>
 </head>
 

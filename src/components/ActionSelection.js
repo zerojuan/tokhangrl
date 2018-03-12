@@ -8,42 +8,10 @@ export default class ActionSelection extends React.Component {
         return this.props.onAction(action);
     };
 
-    getPersonActions = () => {
-        const actions = [];
-        // if action is to a person
-        if (this.props.activeAction.name) {
-            if (this.props.hero.gunAimed) {
-                actions.push({
-                    type: "primary",
-                    action: SHOOT,
-                    text: "Shoot"
-                });
-                actions.push({
-                    type: "primary",
-                    action: FREEZE,
-                    text: '"Halt!"'
-                });
-            } else {
-                actions.push({
-                    type: "primary",
-                    action: ARREST,
-                    text: "Arrest"
-                });
-                actions.push({
-                    type: "primary",
-                    action: TALK,
-                    text: "Talk"
-                });
-            }
-        } else
-            actions.push({
-                type: "default",
-                action: CANCEL,
-                text: "Cancel"
-            });
+    getPersonActions = activeAction => {
         return (
             <div>
-                {actions.map((action, i) => {
+                {activeAction.getActions(this.props.hero).map((action, i) => {
                     return (
                         <Button
                             key={i}
@@ -101,15 +69,11 @@ export default class ActionSelection extends React.Component {
         const activeAction = this.props.activeAction;
 
         // this is a person
-        if (activeAction.name) {
-            return (
-                <div>
-                    <p>Do what to {activeAction.name}?</p>
-                    {this.getPersonActions()}
-                </div>
-            );
-        } else {
-            return <div>{this.getThingActions()}</div>;
-        }
+        return (
+            <div>
+                <p>{activeAction.actionDescription}</p>
+                {this.getPersonActions(activeAction)}
+            </div>
+        );
     }
 }

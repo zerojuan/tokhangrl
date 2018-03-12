@@ -1,6 +1,9 @@
 import React from "react";
+
 import { Layout, Affix } from "antd";
 const { Footer, Sider, Content } = Layout;
+
+import FadeInTransition from "./transitions/FadeInTransition";
 
 import PlayerHud from "./PlayerHud";
 import Game from "./Game";
@@ -10,7 +13,7 @@ import { describeWorld } from "./RL/Description";
 import { findPath } from "./RL/Pathfinder";
 import { doLOS, calculateLine } from "./RL/LineOfSight";
 import WorldGenerator from "./RL/WorldGenerator";
-import { CANCEL } from "./constants";
+import { CANCEL, LEAVE } from "./constants";
 
 export default class App extends React.Component {
     constructor(props) {
@@ -19,6 +22,7 @@ export default class App extends React.Component {
         this.handleHovered = this.handleHovered.bind(this);
         this.state = {
             turn: 0,
+            levelCleared: false,
             world: WorldGenerator.generate(),
             currentHovered: null,
             isMoving: false,
@@ -88,15 +92,6 @@ export default class App extends React.Component {
         } else {
             // if clicked on someone right next to me
             if (this.state.world.clickedAdjacent(x, y)) {
-                if (this.state.world.clickedEdge(x, y)) {
-                    this.setState({
-                        activeAction: {
-                            type: "exit"
-                        }
-                    });
-                    return;
-                }
-
                 const person = this.state.world.getPerson(x, y);
                 if (person) {
                     // show actions panel
@@ -106,7 +101,13 @@ export default class App extends React.Component {
                     return;
                 }
 
-                // if door?
+                const object = this.state.world.getObject(x, y);
+                if (object) {
+                    this.setState({
+                        activeAction: object
+                    });
+                    return;
+                }
             }
         }
 
@@ -169,8 +170,10 @@ export default class App extends React.Component {
 
     handleAction = action => {
         if (action !== CANCEL) {
-            if (this.state.activeAction.type === "exit") {
+            console.log(this.state.activeAction);
+            if (this.state.activeAction.value === LEAVE) {
                 this.setState({
+                    levelCleared: true,
                     activeAction: null
                 });
             } else {
@@ -199,9 +202,20 @@ export default class App extends React.Component {
     };
 
     render() {
+        // gameover item
+        // const item = this.state.levelCleared ? (
+        // ) : null;
+
         return (
             <div>
                 <Layout>
+                    <FadeInTransition in={this.state.levelCleared}>
+                        <Layout key={1}>
+                            <Content>
+                                <h1>This is the content</h1>
+                            </Content>
+                        </Layout>
+                    </FadeInTransition>
                     <Layout>
                         <Content>
                             <Game

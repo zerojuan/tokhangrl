@@ -10,7 +10,8 @@ import {
     W,
     ROWS,
     COLS,
-    MAN
+    MAN,
+    LEAVE
 } from "../constants";
 
 import Names from "./data/Names";
@@ -19,6 +20,7 @@ import People from "./People";
 import World from "./World";
 import Hero from "./Hero";
 import Tile from "./Tile";
+import Thing from "./Thing";
 
 function generate() {
     const level = [];
@@ -61,9 +63,40 @@ function generate() {
         people.push(person);
     }
 
-    const objects = [];
+    let objects = [];
+    // create random exit objects and doors?
+    // create exists
+    const exits = [
+        {
+            x: 0,
+            y: 25
+        },
+        {
+            x: 0,
+            y: 26
+        },
+        {
+            x: 0,
+            y: 27
+        }
+    ];
+    objects = [
+        ...objects,
+        ...exits.map(exit => {
+            const exitThing = new Thing({ x: exit.x, y: exit.y, value: LEAVE });
+            exitThing.setActions([
+                {
+                    type: "primary",
+                    action: LEAVE,
+                    text: "Leave"
+                }
+            ]);
+            exitThing.setDescription("Exit point. Leave to end mission.");
+            return exitThing;
+        })
+    ];
 
-    const hero = new Hero({ x: 25, y: 25 });
+    const hero = new Hero({ x: 5, y: 25 });
 
     return new World({
         level: level,

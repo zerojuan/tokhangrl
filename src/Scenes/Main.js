@@ -26,6 +26,7 @@ class MainScene extends Phaser.Scene {
         this.tiles = null;
         this.pathTiles = [];
         this.characters = null;
+        this.objects = null;
 
         this.pointer = null;
 
@@ -92,6 +93,18 @@ class MainScene extends Phaser.Scene {
                     person.position.y * 12,
                     "chars",
                     1
+                )
+                .setOrigin(0, 0);
+        });
+
+        this.objects = this.world.objects.map(object => {
+            console.log(object);
+            return this.add
+                .image(
+                    object.position.x * 8,
+                    object.position.y * 12,
+                    "chars",
+                    5
                 )
                 .setOrigin(0, 0);
         });
