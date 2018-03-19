@@ -1,7 +1,13 @@
 import React from "react";
 import "phaser";
 
+import { Layout, Affix } from "antd";
+const { Footer, Sider, Content } = Layout;
+
+import FadeInTransition from "./transitions/FadeInTransition";
+
 import Main from "./Scenes/Main";
+import NewsReport from "./components/NewsReport";
 
 const style = {
     // flexGrow: 2,
@@ -44,7 +50,7 @@ export default class Game extends React.Component {
 
     updateWindowDimensions() {
         this.setState({
-            width: window.innerWidth,
+            width: `${window.innerWidth}px`,
             height: `${window.innerHeight * 0.8}px`
         });
     }
@@ -74,6 +80,29 @@ export default class Game extends React.Component {
     }
 
     render() {
-        return <div style={{ height: this.state.height }} id="game-canvas" />;
+        // TODO: show game over ui here
+        return (
+            <div>
+                <FadeInTransition in={this.props.levelCleared}>
+                    <Layout key={1}>
+                        <Content>
+                            <div
+                                style={{
+                                    width: this.state.width,
+                                    height: this.state.height
+                                }}
+                            >
+                                <NewsReport />
+                                This is the content
+                                <span onClick={this.handleDoneGameOver}>
+                                    Done
+                                </span>
+                            </div>
+                        </Content>
+                    </Layout>
+                </FadeInTransition>
+                <div style={{ height: this.state.height }} id="game-canvas" />
+            </div>
+        );
     }
 }

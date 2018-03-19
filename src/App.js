@@ -201,6 +201,12 @@ export default class App extends React.Component {
         });
     };
 
+    handleDoneGameOver = () => {
+        this.setState({
+            levelCleared: false
+        });
+    };
+
     render() {
         // gameover item
         // const item = this.state.levelCleared ? (
@@ -209,13 +215,6 @@ export default class App extends React.Component {
         return (
             <div>
                 <Layout>
-                    <FadeInTransition in={this.state.levelCleared}>
-                        <Layout key={1}>
-                            <Content>
-                                <h1>This is the content</h1>
-                            </Content>
-                        </Layout>
-                    </FadeInTransition>
                     <Layout>
                         <Content>
                             <Game
@@ -223,6 +222,7 @@ export default class App extends React.Component {
                                 world={this.state.world}
                                 nextTurn={this.handleNextTurn}
                                 hovered={this.handleHovered}
+                                levelCleared={this.state.levelCleared}
                             />
                         </Content>
 
