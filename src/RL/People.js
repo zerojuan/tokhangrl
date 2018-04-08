@@ -2,7 +2,6 @@ import { N, S, E, W, ROWS, COLS } from "../constants";
 import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
 import { findPath } from "./Pathfinder";
 export default class People {
-    name = "None";
     age = 25;
     following = null; // person this person is trying to follow
     destination = null; // position this person wants to go to
@@ -14,13 +13,15 @@ export default class People {
 
     hp = 10;
 
+    infoLevel = 0;
+
     occupation = {
         type: 3,
         name: "Housewife"
     };
 
     constructor({ name, type, x, y }) {
-        this.name = name;
+        this._name = name;
         this.x = x;
         this.y = y;
         this.type = type;
@@ -122,6 +123,7 @@ export default class People {
             case TALK:
                 result.msg = `${this.name} talked to you`;
                 this.fear += 1;
+                this.infoLevel += 1;
                 // pick a person from your relatives to rat out
                 break;
         }
@@ -138,6 +140,22 @@ export default class People {
 
     get actionDescription() {
         return `Person ${this.name}, what to do?`;
+    }
+
+    get info() {
+        // construct info based on info level
+        const infoList = [];
+        return infoList;
+    }
+
+    get name() {
+        let name = this._name;
+        // obfuscate
+        if (this.infoLevel === 0) {
+            return this._name.split(" ")[0];
+        } else {
+            return this._name;
+        }
     }
 
     getActions(hero) {
