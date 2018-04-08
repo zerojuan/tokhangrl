@@ -20,7 +20,7 @@ export default class ActionSelection extends React.Component {
                             style={{
                                 marginRight: "5px"
                             }}
-                            onClick={this.onDoAction(action.action)}
+                            onClick={this.onDoAction(action)}
                         >
                             {action.text}
                         </Button>
@@ -55,7 +55,7 @@ export default class ActionSelection extends React.Component {
                             style={{
                                 marginRight: "5px"
                             }}
-                            onClick={this.onDoAction(action.action)}
+                            onClick={this.onDoAction(action)}
                         >
                             {action.text}
                         </Button>

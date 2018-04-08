@@ -1,9 +1,19 @@
 import { N, S, E, W, ROWS, COLS } from "../constants";
 import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
-
+import { findPath } from "./Pathfinder";
 export default class People {
     name = "None";
     age = 25;
+    following = null; // person this person is trying to follow
+    destination = null; // position this person wants to go to
+
+    arrested = false;
+    shotAt = false;
+
+    fear = 0;
+
+    hp = 10;
+
     occupation = {
         type: 3,
         name: "Housewife"
@@ -44,9 +54,7 @@ export default class People {
         if (this.activeAction) {
             // better send a history report
 
-            const message = {
-                msg: `${this.name} reacted to ${this.activeAction}`
-            };
+            const message = this.doAction(this.activeAction);
             this.activeAction = null;
             return message;
         } else {
@@ -54,8 +62,71 @@ export default class People {
             //     this.moveRandom();
             //     return { msg: `${this.name} has moved randomly` };
             // }
-            return null;
+            // return null;
         }
+
+        if (this.following) {
+            // follow this person
+            this.doFollow(world);
+        }
+    }
+
+    doFollow(world) {
+        const target = this.following.position;
+        const path = findPath(
+            {
+                row: this.position.y,
+                col: this.position.x
+            },
+            {
+                row: target.y,
+                col: target.x
+            },
+            world.level
+        );
+        if (path.length > 0) {
+            const currentMove = path[0];
+            if (currentMove.col === target.x && currentMove.row === target.y) {
+                return;
+            }
+            if (
+                world.people.some(
+                    person =>
+                        currentMove.col === person.x &&
+                        currentMove.row === person.y
+                )
+            ) {
+                return;
+            }
+
+            this.x = currentMove.col;
+            this.y = currentMove.row;
+        }
+    }
+
+    doAction(action) {
+        const result = {};
+        switch (action.action) {
+            case SHOOT:
+                this.shotAt = true;
+                // randomly decide if it was a hit based on distance
+                break;
+            case FREEZE:
+                this.fear += 60;
+                break;
+            case ARREST:
+                this.following = action.actor;
+                this.arrested = true;
+                result.msg = `${this.name} is under arrest`;
+                break;
+            case TALK:
+                result.msg = `${this.name} talked to you`;
+                this.fear += 1;
+                // pick a person from your relatives to rat out
+                break;
+        }
+
+        return result;
     }
 
     get position() {
@@ -83,11 +154,13 @@ export default class People {
                 text: '"Halt!"'
             });
         } else {
-            actions.push({
-                type: "primary",
-                action: ARREST,
-                text: "Arrest"
-            });
+            if (!this.arrested) {
+                actions.push({
+                    type: "primary",
+                    action: ARREST,
+                    text: "Arrest"
+                });
+            }
             actions.push({
                 type: "primary",
                 action: TALK,

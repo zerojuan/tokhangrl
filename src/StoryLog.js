@@ -1,6 +1,5 @@
 import React from "react";
 import Infinite from "react-infinite";
-import Scrollbars from "react-custom-scrollbars";
 
 import ActionSelection from "./components/ActionSelection";
 

@@ -85,6 +85,12 @@ export default class World {
             }
         }
 
+        console.log("Hero Action: ", this._hero.activeAction);
+        if (this._hero.activeAction) {
+            // process hero action repercussions
+            this._hero.activeAction = null;
+        }
+
         this._people.forEach(person => {
             const actionResult = person.do(this);
             if (actionResult) {

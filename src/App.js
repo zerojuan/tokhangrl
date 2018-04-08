@@ -170,17 +170,21 @@ export default class App extends React.Component {
 
     handleAction = action => {
         if (action !== CANCEL) {
-            console.log(this.state.activeAction);
+            console.log("Active Action:", this.state.activeAction);
             if (this.state.activeAction.value === LEAVE) {
+                this.state.world.hero.activeAction = null;
                 this.setState({
                     levelCleared: true,
                     activeAction: null
                 });
             } else {
+                this.state.world.hero.activeAction = action;
+                action.actor = this.state.world.hero;
                 this.state.activeAction.registerAction(action);
                 this.doMove();
             }
         } else {
+            this.state.world.hero.activeAction = null;
             this.setState({
                 activeAction: null
             });
@@ -207,6 +211,34 @@ export default class App extends React.Component {
         });
     };
 
+    handleNewGame = () => {
+        this.setState(prevState => {
+            const world = WorldGenerator.generate();
+            doLOS(
+                {
+                    row: world.hero.x,
+                    col: world.hero.y
+                },
+                5,
+                world.level
+            );
+
+            return {
+                turn: 0,
+                levelCleared: false,
+                world: world,
+                currentHovered: null,
+                isMoving: false,
+                activeAction: null,
+                history: [
+                    {
+                        msg: "It's a new day. In Sta. Ana"
+                    }
+                ]
+            };
+        });
+    };
+
     render() {
         // gameover item
         // const item = this.state.levelCleared ? (
@@ -223,6 +255,7 @@ export default class App extends React.Component {
                                 nextTurn={this.handleNextTurn}
                                 hovered={this.handleHovered}
                                 levelCleared={this.state.levelCleared}
+                                onNewGame={this.handleNewGame}
                             />
                         </Content>
 

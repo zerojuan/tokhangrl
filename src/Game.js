@@ -1,7 +1,7 @@
 import React from "react";
 import "phaser";
 
-import { Layout, Affix } from "antd";
+import { Layout, Affix, Row, Col } from "antd";
 const { Footer, Sider, Content } = Layout;
 
 import FadeInTransition from "./transitions/FadeInTransition";
@@ -22,6 +22,7 @@ export default class Game extends React.Component {
         this._game = null;
         this.handleClick = this.handleClick.bind(this);
         this.handleHover = this.handleHover.bind(this);
+        this.handleDoneGameOver = this.handleDoneGameOver.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
         this.mainScene = null;
     }
@@ -67,6 +68,11 @@ export default class Game extends React.Component {
         this.props.hovered(x, y);
     }
 
+    handleDoneGameOver() {
+        console.log("Done gameover");
+        this.props.onNewGame();
+    }
+
     componentWillReceiveProps(nextProps) {
         this.mainScene.updatePath(nextProps.world.path);
         if (nextProps.turn !== this.props.turn) {
@@ -92,8 +98,14 @@ export default class Game extends React.Component {
                                     height: this.state.height
                                 }}
                             >
-                                <NewsReport />
-                                This is the content
+                                <Row>
+                                    <Col
+                                        xs={{ span: 5, offset: 1 }}
+                                        lg={{ span: 6, offset: 2 }}
+                                    >
+                                        <NewsReport />
+                                    </Col>
+                                </Row>
                                 <span onClick={this.handleDoneGameOver}>
                                     Done
                                 </span>

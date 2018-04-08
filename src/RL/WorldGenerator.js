@@ -96,6 +96,13 @@ function generate() {
         })
     ];
 
+    const testPerson = new People({
+        name: "Juan de la Cruz",
+        type: MAN,
+        x: 6,
+        y: 25
+    });
+    people.push(testPerson);
     const hero = new Hero({ x: 5, y: 25 });
 
     return new World({

@@ -162,6 +162,7 @@ class MainScene extends Phaser.Scene {
     }
 
     updateWorld(world) {
+        this.world = world;
         for (let y = 0; y < 45; y++) {
             for (let x = 0; x < 160; x++) {
                 this.tiles[x][y].setTexture("atlas", world.level[x][y].value);
