@@ -30,7 +30,10 @@ export default class Game extends React.Component {
     componentDidMount() {
         this.updateWindowDimensions();
         window.addEventListener("resize", this.updateWindowDimensions);
-        this.mainScene = new Main(this.props.world);
+        this.mainScene = new Main(this.props.world, () => {
+            // turn the lights once the world is ready
+            this.mainScene.updateWorld(this.props.world);
+        });
         const config = {
             width: 1280,
             height: 540,
@@ -75,6 +78,7 @@ export default class Game extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         this.mainScene.updatePath(nextProps.world.path);
+
         if (nextProps.turn !== this.props.turn) {
             this.mainScene.setTurn(nextProps.turn);
             this.mainScene.updateWorld(nextProps.world);

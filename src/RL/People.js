@@ -2,7 +2,7 @@ import { N, S, E, W, ROWS, COLS } from "../constants";
 import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
 import { findPath } from "./Pathfinder";
 export default class People {
-    age = 25;
+    _age = 25;
     following = null; // person this person is trying to follow
     destination = null; // position this person wants to go to
 
@@ -156,6 +156,13 @@ export default class People {
         } else {
             return this._name;
         }
+    }
+
+    get age() {
+        if (this.infoLevel === 0) {
+            return "??";
+        }
+        return this._age;
     }
 
     getActions(hero) {

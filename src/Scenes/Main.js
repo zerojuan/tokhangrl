@@ -11,7 +11,7 @@ import {
 } from "../constants";
 
 class MainScene extends Phaser.Scene {
-    constructor(world) {
+    constructor(world, onCreateDone) {
         super({
             key: "MainScene"
         });
@@ -32,6 +32,8 @@ class MainScene extends Phaser.Scene {
 
         this.onClickHandler = null;
         this.onHoverHandler = null;
+
+        this.onCreateDone = onCreateDone;
     }
 
     preload() {
@@ -141,6 +143,8 @@ class MainScene extends Phaser.Scene {
             this.onHoverHandler(this.mouseX, this.mouseY);
             this.onClickHandler(this.mouseX, this.mouseY);
         });
+
+        this.onCreateDone();
     }
 
     update() {
