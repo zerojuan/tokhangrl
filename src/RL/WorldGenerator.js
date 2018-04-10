@@ -122,11 +122,24 @@ function createRoom(level, x, y, width, height) {
     // create walls
     for (let iX = x; iX < x + width; iX++) {
         for (let iY = y; iY < y + height; iY++) {
-            level[iX][iY].value = WALL;
-            level[iX][iY].solid = true;
-            level[iX][iY].ground = false;
+            if (
+                iX === x ||
+                iX === x + width - 1 ||
+                iY === y ||
+                iY === y + height - 1
+            ) {
+                level[iX][iY].value = WALL;
+                level[iX][iY].solid = true;
+                level[iX][iY].ground = false;
+            }
         }
     }
+
+    // create door
+    const door = level[x + Math.floor(width / 2)][y + height - 1];
+    door.value = DOOR;
+    door.solid = true;
+    door.ground = false;
 }
 
 function createRoad(level, x, y, direction, width, length) {
