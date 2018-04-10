@@ -18,6 +18,8 @@ export default class PlayerHud extends React.Component {
                     onGunToggled={this.props.onGunToggled}
                     tile={this.props.tileInfo ? this.props.tileInfo.tile : null}
                 />
+                <Divider>Target</Divider>
+                <PersonInfo person={this.props.target} />
 
                 {this.props.tileInfo ? (
                     <div>

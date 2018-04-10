@@ -20,6 +20,10 @@ export default class World {
         return this._path;
     }
 
+    get target() {
+        return this._target;
+    }
+
     set path(p) {
         this._path = p;
     }

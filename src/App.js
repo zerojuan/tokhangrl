@@ -20,19 +20,7 @@ export default class App extends React.Component {
         super(props);
         this.handleNextTurn = this.handleNextTurn.bind(this);
         this.handleHovered = this.handleHovered.bind(this);
-        this.state = {
-            turn: 0,
-            levelCleared: false,
-            world: WorldGenerator.generate(),
-            currentHovered: null,
-            isMoving: false,
-            activeAction: null,
-            history: [
-                {
-                    msg: "It's a new day. In Sta. Ana"
-                }
-            ]
-        };
+        this.state = this.createNewGameState();
         doLOS(
             { row: this.state.world.hero.x, col: this.state.world.hero.y },
             5,
@@ -213,30 +201,35 @@ export default class App extends React.Component {
 
     handleNewGame = () => {
         this.setState(prevState => {
-            const world = WorldGenerator.generate();
+            const newState = this.createNewGameState();
             doLOS(
                 {
-                    row: world.hero.x,
-                    col: world.hero.y
+                    row: newState.world.hero.x,
+                    col: newState.world.hero.y
                 },
                 5,
-                world.level
+                newState.world.level
             );
 
-            return {
-                turn: 0,
-                levelCleared: false,
-                world: world,
-                currentHovered: null,
-                isMoving: false,
-                activeAction: null,
-                history: [
-                    {
-                        msg: "It's a new day. In Sta. Ana"
-                    }
-                ]
-            };
+            return newState;
         });
+    };
+
+    createNewGameState = () => {
+        const world = WorldGenerator.generate();
+        return {
+            turn: 0,
+            levelCleared: false,
+            world: world,
+            currentHovered: null,
+            isMoving: false,
+            activeAction: null,
+            history: [
+                {
+                    msg: "It's a new day. In Sta. Ana"
+                }
+            ]
+        };
     };
 
     render() {
@@ -275,6 +268,7 @@ export default class App extends React.Component {
                             onGunToggled={this.handleGunToggled}
                             tileInfo={this.state.currentHovered}
                             nextTurn={this.handleNextTurn}
+                            target={this.state.world.target}
                         />
                     </Sider>
                 </Layout>

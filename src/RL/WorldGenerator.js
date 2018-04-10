@@ -102,15 +102,20 @@ function generate() {
         x: 6,
         y: 25
     });
+
     people.push(testPerson);
     const hero = new Hero({ x: 5, y: 25 });
 
-    return new World({
+    const world = new World({
         level: level,
         people: people,
         objects: objects,
         hero: hero
     });
+    // create target
+    world.setTarget(testPerson);
+
+    return world;
 }
 
 function createRoom(level, x, y, width, height) {
