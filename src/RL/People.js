@@ -111,9 +111,11 @@ export default class People {
             case SHOOT:
                 this.shotAt = true;
                 // randomly decide if it was a hit based on distance
+                result.msg = `BANG!`;
                 break;
             case FREEZE:
                 this.fear += 60;
+                result.msg = "Hwag po!";
                 break;
             case ARREST:
                 this.following = action.actor;

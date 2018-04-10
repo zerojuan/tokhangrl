@@ -70,11 +70,13 @@ export default class World {
 
         if (!this._path) {
             isMoving = false;
+        } else if (this._hero.gunAimed) {
+            isMoving = false;
         } else {
             const currentMove = this._path[this.currentIndex];
             if (currentMove) {
                 if (this.getPerson(currentMove.col, currentMove.row)) {
-                    isMoving = false;
+                    isMoving = false; // prevent moving to another person's space
                 } else {
                     this._hero.move(currentMove);
                     this.currentIndex++;
