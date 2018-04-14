@@ -1,6 +1,7 @@
 import { DOOR, WALL, DOOR_ACTION } from "../constants";
 
 import Thing from "./Thing";
+import DoorAction from "./actions/DoorAction";
 
 export default class Room {
     _doors = [];
@@ -23,15 +24,9 @@ export default class Room {
         const door = new Thing({
             x: x + Math.floor(width / 2),
             y: y + height - 1,
-            value: DOOR_ACTION
+            value: DOOR
         });
-        door.setActions([
-            {
-                uiType: "primary",
-                action: DOOR_ACTION,
-                text: "Operate"
-            }
-        ]);
+        door.setActions([new DoorAction({}, door)]);
         door.setDescription("Door to this house.");
 
         this._doors.push(door);
@@ -52,17 +47,20 @@ export default class Room {
                     iY === y ||
                     iY === y + height - 1
                 ) {
+                    // does this match a door?
+                    const door = this._doors.find(d => {
+                        return d.position.x === iX && d.position.y === iY;
+                    });
+
+                    if (door) {
+                        continue;
+                    }
+
                     level[iX][iY].value = WALL;
                     level[iX][iY].solid = true;
                     level[iX][iY].ground = false;
                 }
             }
         }
-
-        // create door
-        // const door = level[x + Math.floor(width / 2)][y + height - 1];
-        // door.value = DOOR;
-        // door.solid = true;
-        // door.ground = false;
     }
 }

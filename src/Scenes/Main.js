@@ -100,9 +100,13 @@ class MainScene extends Phaser.Scene {
         });
 
         this.objects = this.world.objects.map(thing => {
-            console.log("What thing:", thing.position);
             return this.add
-                .image(thing.position.x * 8, thing.position.y * 12, "chars", 5)
+                .image(
+                    thing.position.x * 8,
+                    thing.position.y * 12,
+                    "atlas",
+                    thing.value
+                )
                 .setOrigin(0, 0);
         });
 
@@ -177,6 +181,10 @@ class MainScene extends Phaser.Scene {
                 }
             }
         }
+
+        world.objects.forEach((thing, i) => {
+            this.objects[i].setTexture("atlas", thing.value);
+        });
 
         world.people.forEach((person, i) => {
             this.characters[i].x = person.x * 8;

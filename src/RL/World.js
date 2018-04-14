@@ -109,6 +109,13 @@ export default class World {
             }
         });
 
+        this._objects.forEach(thing => {
+            const actionResult = thing.do(this);
+            if (actionResult) {
+                history.push(actionResult);
+            }
+        });
+
         if (!isMoving) {
             this.currentIndex = 0;
         }

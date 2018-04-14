@@ -11,6 +11,7 @@ import {
     ROWS,
     COLS,
     MAN,
+    EXIT,
     LEAVE,
     CANCEL
 } from "../constants";
@@ -97,7 +98,7 @@ function generate() {
     objects = [
         ...objects,
         ...exits.map(exit => {
-            const exitThing = new Thing({ x: exit.x, y: exit.y, value: LEAVE });
+            const exitThing = new Thing({ x: exit.x, y: exit.y, value: EXIT });
             exitThing.setActions([new LeaveAction({})]);
             exitThing.setDescription("Exit point. Leave to end mission.");
             return exitThing;
@@ -112,7 +113,7 @@ function generate() {
     });
 
     people.push(testPerson);
-    const hero = new Hero({ x: 5, y: 25 });
+    const hero = new Hero({ x: 25, y: 21 });
 
     const world = new World({
         level: level,
