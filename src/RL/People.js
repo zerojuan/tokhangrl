@@ -91,7 +91,7 @@ export default class People {
             },
             world.level
         );
-        if (path.length > 0) {
+        if (path && path.length > 0) {
             const currentMove = path[0];
             if (currentMove.col === target.x && currentMove.row === target.y) {
                 return;

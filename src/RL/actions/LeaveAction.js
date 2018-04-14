@@ -25,7 +25,7 @@ export default class LeaveAction {
         app.state.world.hero.activeAction = null;
         app.setState({
             levelCleared: true,
-            activeAction: null
+            activeSelection: null
         });
     }
 }

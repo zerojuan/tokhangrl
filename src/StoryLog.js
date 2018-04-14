@@ -10,10 +10,6 @@ export default class StoryLog extends React.Component {
     constructor(props) {
         super(props);
     }
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.activeSelection) {
-        }
-    }
 
     getHistoryElements = () => {
         return;

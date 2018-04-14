@@ -77,18 +77,18 @@ export default class World {
         let isMoving = false;
         let history = [];
 
+        let currentMove;
+
         if (!this._path) {
             isMoving = false;
         } else if (this._hero.gunAimed) {
             isMoving = false;
         } else {
-            const currentMove = this._path[this.currentIndex];
+            currentMove = this._path[this.currentIndex];
             if (currentMove) {
                 if (this.getPerson(currentMove.col, currentMove.row)) {
                     isMoving = false; // prevent moving to another person's space
                 } else {
-                    this._hero.move(currentMove);
-                    this.currentIndex++;
                     isMoving = true;
                 }
             } else {
@@ -96,8 +96,8 @@ export default class World {
             }
         }
 
-        console.log("Hero Action: ", this._hero.activeAction);
         if (this._hero.activeAction) {
+            isMoving = false;
             // process hero action repercussions
             this._hero.activeAction = null;
         }
@@ -118,6 +118,9 @@ export default class World {
 
         if (!isMoving) {
             this.currentIndex = 0;
+        } else {
+            this._hero.move(currentMove);
+            this.currentIndex++;
         }
 
         return {

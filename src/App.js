@@ -51,6 +51,14 @@ export default class App extends React.Component {
         } else {
             this.setState(prevState => {
                 prevState.world.path = [];
+                doLOS(
+                    {
+                        row: prevState.world.hero.x,
+                        col: prevState.world.hero.y
+                    },
+                    5,
+                    prevState.world.level
+                );
                 return {
                     turn: prevState.turn + 1,
                     isMoving: false,

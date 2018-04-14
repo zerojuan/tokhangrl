@@ -52,11 +52,10 @@ export default class Room {
                         return d.position.x === iX && d.position.y === iY;
                     });
 
-                    if (door) {
-                        continue;
+                    if (!door) {
+                        level[iX][iY].value = WALL;
                     }
 
-                    level[iX][iY].value = WALL;
                     level[iX][iY].solid = true;
                     level[iX][iY].ground = false;
                 }
