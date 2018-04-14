@@ -1,6 +1,12 @@
 import { N, S, E, W, ROWS, COLS } from "../constants";
 import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
 import { findPath } from "./Pathfinder";
+import CancelAction from "./actions/CancelAction";
+import ShootAction from "./actions/ShootAction";
+import ArrestAction from "./actions/ArrestAction";
+import TalkAction from "./actions/TalkAction";
+import FreezeAction from "./actions/FreezeAction";
+
 export default class People {
     _age = 25;
     following = null; // person this person is trying to follow
@@ -55,7 +61,7 @@ export default class People {
         if (this.activeAction) {
             // better send a history report
 
-            const message = this.doAction(this.activeAction);
+            const message = this.activeAction.doAction();
             this.activeAction = null;
             return message;
         } else {
@@ -105,34 +111,6 @@ export default class People {
         }
     }
 
-    doAction(action) {
-        const result = {};
-        switch (action.action) {
-            case SHOOT:
-                this.shotAt = true;
-                // randomly decide if it was a hit based on distance
-                result.msg = `BANG!`;
-                break;
-            case FREEZE:
-                this.fear += 60;
-                result.msg = "Hwag po!";
-                break;
-            case ARREST:
-                this.following = action.actor;
-                this.arrested = true;
-                result.msg = `${this.name} is under arrest`;
-                break;
-            case TALK:
-                result.msg = `${this.name} talked to you`;
-                this.fear += 1;
-                this.infoLevel += 1;
-                // pick a person from your relatives to rat out
-                break;
-        }
-
-        return result;
-    }
-
     get position() {
         return {
             x: this.x,
@@ -170,35 +148,15 @@ export default class People {
     getActions(hero) {
         const actions = [];
         if (hero.gunAimed) {
-            actions.push({
-                type: "primary",
-                action: SHOOT,
-                text: "Shoot"
-            });
-            actions.push({
-                type: "primary",
-                action: FREEZE,
-                text: '"Halt!"'
-            });
+            actions.push(new ShootAction({}, this));
+            actions.push(new FreezeAction({}, this));
         } else {
             if (!this.arrested) {
-                actions.push({
-                    type: "primary",
-                    action: ARREST,
-                    text: "Arrest"
-                });
+                actions.push(new ArrestAction({}, this));
             }
-            actions.push({
-                type: "primary",
-                action: TALK,
-                text: "Talk"
-            });
+            actions.push(new TalkAction({}, this));
         }
-        actions.push({
-            type: "default",
-            action: CANCEL,
-            text: "Cancel"
-        });
+        actions.push(new CancelAction({}));
 
         return actions;
     }

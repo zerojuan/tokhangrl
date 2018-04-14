@@ -13,7 +13,7 @@ import { describeWorld } from "./RL/Description";
 import { findPath } from "./RL/Pathfinder";
 import { doLOS, calculateLine } from "./RL/LineOfSight";
 import WorldGenerator from "./RL/WorldGenerator";
-import { CANCEL, LEAVE } from "./constants";
+import { CANCEL, LEAVE, STATE_LEVEL_ACTION } from "./constants";
 
 export default class App extends React.Component {
     constructor(props) {
@@ -43,7 +43,7 @@ export default class App extends React.Component {
                 return {
                     turn: prevState.turn + 1,
                     isMoving: isMoving,
-                    activeAction: null,
+                    activeSelection: null,
                     history: [...prevState.history, ...history]
                 };
             });
@@ -54,7 +54,7 @@ export default class App extends React.Component {
                 return {
                     turn: prevState.turn + 1,
                     isMoving: false,
-                    activeAction: null,
+                    activeSelection: null,
                     history: [...prevState.history, ...history]
                 };
             });
@@ -73,7 +73,7 @@ export default class App extends React.Component {
             const person = this.state.world.getPerson(x, y);
             if (person) {
                 this.setState({
-                    activeAction: person
+                    activeSelection: person
                 });
                 return;
             }
@@ -84,7 +84,7 @@ export default class App extends React.Component {
                 if (person) {
                     // show actions panel
                     this.setState({
-                        activeAction: person
+                        activeSelection: person
                     });
                     return;
                 }
@@ -92,7 +92,7 @@ export default class App extends React.Component {
                 const object = this.state.world.getObject(x, y);
                 if (object) {
                     this.setState({
-                        activeAction: object
+                        activeSelection: object
                     });
                     return;
                 }
@@ -111,7 +111,7 @@ export default class App extends React.Component {
                     return;
                 }
 
-                if (prevState.activeAction) {
+                if (prevState.activeSelection) {
                     return;
                 }
 
@@ -157,25 +157,15 @@ export default class App extends React.Component {
     }
 
     handleAction = action => {
-        if (action !== CANCEL) {
-            console.log("Active Action:", this.state.activeAction);
-            if (this.state.activeAction.value === LEAVE) {
-                this.state.world.hero.activeAction = null;
-                this.setState({
-                    levelCleared: true,
-                    activeAction: null
-                });
-            } else {
-                this.state.world.hero.activeAction = action;
-                action.actor = this.state.world.hero;
-                this.state.activeAction.registerAction(action);
-                this.doMove();
-            }
+        console.log("Action:", action);
+        if (action.actionType === STATE_LEVEL_ACTION) {
+            action.doAction(this);
+            return;
         } else {
-            this.state.world.hero.activeAction = null;
-            this.setState({
-                activeAction: null
-            });
+            this.state.world.hero.activeAction = action;
+            action.actor = this.state.world.hero;
+            this.state.activeSelection.registerAction(action);
+            this.doMove();
         }
     };
 
@@ -187,7 +177,7 @@ export default class App extends React.Component {
             return {
                 turn: prevState.turn + 1,
                 isMoving: false,
-                activeAction: null,
+                activeSelection: null,
                 history: [...prevState.history, ...history]
             };
         });
@@ -223,7 +213,7 @@ export default class App extends React.Component {
             world: world,
             currentHovered: null,
             isMoving: false,
-            activeAction: null,
+            activeSelection: null,
             history: [
                 {
                     msg: "It's a new day. In Sta. Ana"
@@ -233,10 +223,6 @@ export default class App extends React.Component {
     };
 
     render() {
-        // gameover item
-        // const item = this.state.levelCleared ? (
-        // ) : null;
-
         return (
             <div>
                 <Layout>
@@ -254,7 +240,7 @@ export default class App extends React.Component {
 
                         <Footer style={{ padding: "6px 6px" }}>
                             <StoryLog
-                                activeAction={this.state.activeAction}
+                                activeSelection={this.state.activeSelection}
                                 hero={this.state.world.hero}
                                 history={this.state.history}
                                 onAction={this.handleAction}

@@ -11,7 +11,8 @@ import {
     ROWS,
     COLS,
     MAN,
-    LEAVE
+    LEAVE,
+    CANCEL
 } from "../constants";
 
 import Names from "./data/Names";
@@ -21,6 +22,8 @@ import World from "./World";
 import Hero from "./Hero";
 import Tile from "./Tile";
 import Thing from "./Thing";
+import Room from "./Room";
+import LeaveAction from "./actions/LeaveAction";
 
 function generate() {
     const level = [];
@@ -41,10 +44,22 @@ function generate() {
         }
     }
 
+    let objects = [];
+
     createRoad(level, 0, 25, E, 4, 160);
     createRoad(level, COLS / 2, 0, S, 2, 45);
 
-    createRoom(level, 15, 15, 20, 5);
+    const rooms = [];
+    const firstRoom = new Room({
+        x: 15,
+        y: 15,
+        width: 20,
+        height: 5
+    });
+    firstRoom.draw(level);
+    rooms.push(firstRoom);
+
+    objects = [...objects, ...firstRoom.doors];
 
     const people = [];
 
@@ -63,7 +78,6 @@ function generate() {
         people.push(person);
     }
 
-    let objects = [];
     // create random exit objects and doors?
     // create exists
     const exits = [
@@ -84,13 +98,7 @@ function generate() {
         ...objects,
         ...exits.map(exit => {
             const exitThing = new Thing({ x: exit.x, y: exit.y, value: LEAVE });
-            exitThing.setActions([
-                {
-                    type: "primary",
-                    action: LEAVE,
-                    text: "Leave"
-                }
-            ]);
+            exitThing.setActions([new LeaveAction({})]);
             exitThing.setDescription("Exit point. Leave to end mission.");
             return exitThing;
         })
@@ -110,36 +118,13 @@ function generate() {
         level: level,
         people: people,
         objects: objects,
-        hero: hero
+        hero: hero,
+        rooms: rooms
     });
     // create target
     world.setTarget(testPerson);
 
     return world;
-}
-
-function createRoom(level, x, y, width, height) {
-    // create walls
-    for (let iX = x; iX < x + width; iX++) {
-        for (let iY = y; iY < y + height; iY++) {
-            if (
-                iX === x ||
-                iX === x + width - 1 ||
-                iY === y ||
-                iY === y + height - 1
-            ) {
-                level[iX][iY].value = WALL;
-                level[iX][iY].solid = true;
-                level[iX][iY].ground = false;
-            }
-        }
-    }
-
-    // create door
-    const door = level[x + Math.floor(width / 2)][y + height - 1];
-    door.value = DOOR;
-    door.solid = true;
-    door.ground = false;
 }
 
 function createRoad(level, x, y, direction, width, length) {

@@ -26,3 +26,7 @@ export const TALK = "talk";
 export const INTIMIDATE = "intimidate";
 export const CANCEL = "cancel";
 export const LEAVE = "leave";
+export const DOOR_ACTION = "doorAction";
+
+export const STATE_LEVEL_ACTION = "stateLevelAction";
+export const OBJECT_LEVEL_ACTION = "objectLevelAction";

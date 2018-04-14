@@ -12,6 +12,10 @@ export default class World {
         return this._objects;
     }
 
+    get rooms() {
+        return this._rooms;
+    }
+
     get hero() {
         return this._hero;
     }
@@ -28,12 +32,13 @@ export default class World {
         this._path = p;
     }
 
-    constructor({ level, people, objects, hero, path }) {
+    constructor({ level, people, objects, hero, path, rooms }) {
         this._level = level;
         this._people = people;
         this._objects = objects;
         this._hero = hero;
         this._path = path;
+        this._rooms = rooms;
 
         this.currentIndex = 0;
     }

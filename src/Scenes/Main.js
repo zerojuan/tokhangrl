@@ -99,15 +99,10 @@ class MainScene extends Phaser.Scene {
                 .setOrigin(0, 0);
         });
 
-        this.objects = this.world.objects.map(object => {
-            console.log(object);
+        this.objects = this.world.objects.map(thing => {
+            console.log("What thing:", thing.position);
             return this.add
-                .image(
-                    object.position.x * 8,
-                    object.position.y * 12,
-                    "chars",
-                    5
-                )
+                .image(thing.position.x * 8, thing.position.y * 12, "chars", 5)
                 .setOrigin(0, 0);
         });
 

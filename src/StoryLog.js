@@ -11,7 +11,7 @@ export default class StoryLog extends React.Component {
         super(props);
     }
     componentWillReceiveProps(nextProps) {
-        if (nextProps.activeAction) {
+        if (nextProps.activeSelection) {
         }
     }
 
@@ -22,10 +22,10 @@ export default class StoryLog extends React.Component {
     render() {
         return (
             <div style={style}>
-                {this.props.activeAction ? (
+                {this.props.activeSelection ? (
                     <ActionSelection
                         hero={this.props.hero}
-                        activeAction={this.props.activeAction}
+                        activeSelection={this.props.activeSelection}
                         onAction={this.props.onAction}
                     />
                 ) : (
