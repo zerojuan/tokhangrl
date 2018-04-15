@@ -1,5 +1,5 @@
-export const COLS = 160;
-export const ROWS = 45;
+export const COLS = 120;
+export const ROWS = 40;
 
 export const WALL = 0;
 export const DOOR = 1;

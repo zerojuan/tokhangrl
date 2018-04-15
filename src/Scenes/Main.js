@@ -7,8 +7,14 @@ import {
     DOOR_OPEN,
     DIRT_ROAD,
     BLOCK,
-    HERO
+    HERO,
+    ROWS,
+    COLS
 } from "../constants";
+
+// TODO: double the sprite size
+const baseTileWidth = 8 * 2;
+const baseTileHeight = 12 * 2;
 
 class MainScene extends Phaser.Scene {
     constructor(world, onCreateDone) {
@@ -61,17 +67,18 @@ class MainScene extends Phaser.Scene {
         });
 
         this.tiles = [];
-        for (let x = 0; x < 160; x++) {
+        for (let x = 0; x < COLS; x++) {
             this.tiles.push([]);
-            for (let y = 0; y < 45; y++) {
+            for (let y = 0; y < ROWS; y++) {
                 this.tiles[x].push(
                     this.add
                         .image(
-                            x * 8,
-                            y * 12,
+                            x * baseTileWidth,
+                            y * baseTileHeight,
                             "atlas",
                             this.world.level[x][y].value
                         )
+                        .setScale(2)
                         .setAlpha(0)
                         .setOrigin(0, 0)
                         .setTint(0x00ff00)
@@ -82,8 +89,9 @@ class MainScene extends Phaser.Scene {
         for (let x = 0; x < 120; x++) {
             this.pathTiles.push(
                 this.add
-                    .image(-5 * 8, -5 * 12, "atlas", 6)
+                    .image(-5 * baseTileWidth, -5 * baseTileHeight, "atlas", 6)
                     .setAlpha(0)
+                    .setScale(2)
                     .setOrigin(0, 0)
                     .setTint(0x0000ff)
             );
@@ -91,32 +99,35 @@ class MainScene extends Phaser.Scene {
         this.characters = this.world.people.map(person => {
             return this.add
                 .image(
-                    person.position.x * 8,
-                    person.position.y * 12,
+                    person.position.x * baseTileWidth,
+                    person.position.y * baseTileHeight,
                     "chars",
                     1
                 )
+                .setScale(2)
                 .setOrigin(0, 0);
         });
 
         this.objects = this.world.objects.map(thing => {
             return this.add
                 .image(
-                    thing.position.x * 8,
-                    thing.position.y * 12,
+                    thing.position.x * baseTileWidth,
+                    thing.position.y * baseTileHeight,
                     "atlas",
                     thing.value
                 )
+                .setScale(2)
                 .setOrigin(0, 0);
         });
 
         this.hero = this.add
             .image(
-                this.world.hero.position.x * 8,
-                this.world.hero.position.y * 12,
+                this.world.hero.position.x * baseTileWidth,
+                this.world.hero.position.y * baseTileHeight,
                 "chars",
                 HERO
             )
+            .setScale(2)
             .setOrigin(0, 0);
         this.text = this.add
             .text(120, 50, "What", {
@@ -125,19 +136,19 @@ class MainScene extends Phaser.Scene {
             })
             .setOrigin(0.5, 0.5);
         this.input.on("pointermove", event => {
-            this.mouseX = Math.floor(event.x / 8);
-            this.mouseY = Math.floor(event.y / 12);
+            this.mouseX = Math.floor(event.x / baseTileWidth);
+            this.mouseY = Math.floor(event.y / baseTileHeight);
 
             // this.tiles[this.mouseY][this.mouseX].setTexture("atlas", 1);
-            this.pointer.x = this.mouseX * 8;
-            this.pointer.y = this.mouseY * 12;
+            this.pointer.x = this.mouseX * baseTileWidth;
+            this.pointer.y = this.mouseY * baseTileHeight;
             this.onHoverHandler(this.mouseX, this.mouseY);
         });
 
         this.input.on("pointerdown", event => {
             // clicked on this
-            this.mouseX = Math.floor(event.x / 8);
-            this.mouseY = Math.floor(event.y / 12);
+            this.mouseX = Math.floor(event.x / baseTileWidth);
+            this.mouseY = Math.floor(event.y / baseTileHeight);
 
             this.onHoverHandler(this.mouseX, this.mouseY);
             this.onClickHandler(this.mouseX, this.mouseY);
@@ -166,8 +177,8 @@ class MainScene extends Phaser.Scene {
 
     updateWorld(world) {
         this.world = world;
-        for (let y = 0; y < 45; y++) {
-            for (let x = 0; x < 160; x++) {
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
                 this.tiles[x][y].setTexture("atlas", world.level[x][y].value);
                 if (world.level[x][y].visibility === 1) {
                     this.tweens.add({
@@ -184,19 +195,25 @@ class MainScene extends Phaser.Scene {
 
         world.objects.forEach((thing, i) => {
             this.objects[i].setTexture("atlas", thing.value);
+            this.objects[i].setAlpha(
+                world.level[thing.position.x][thing.position.y].visibility
+            );
         });
 
         world.people.forEach((person, i) => {
-            this.characters[i].x = person.x * 8;
-            this.characters[i].y = person.y * 12;
+            this.characters[i].x = person.x * baseTileWidth;
+            this.characters[i].y = person.y * baseTileHeight;
+            this.characters[i].setAlpha(
+                world.level[person.x][person.y].visibility
+            );
         });
 
         // this.hero.x = this.world.hero.x * 8;
         // this.hero.y = this.world.hero.y * 12;
         this.tweens.add({
             targets: this.hero,
-            x: this.world.hero.x * 8,
-            y: this.world.hero.y * 12,
+            x: this.world.hero.x * baseTileWidth,
+            y: this.world.hero.y * baseTileHeight,
             ease: "Power1",
             duration: 150
         });
@@ -205,8 +222,8 @@ class MainScene extends Phaser.Scene {
     updatePath(path) {
         if (!path) return;
 
-        for (let y = 0; y < 45; y++) {
-            for (let x = 0; x < 160; x++) {
+        for (let y = 0; y < ROWS; y++) {
+            for (let x = 0; x < COLS; x++) {
                 if (this.tiles[x][y]) {
                     this.tiles[x][y].setAlpha(
                         this.world.level[x][y].visibility
@@ -217,8 +234,8 @@ class MainScene extends Phaser.Scene {
 
         this.pathTiles.forEach((pathTile, i) => {
             if (i >= this.world.currentIndex && i < path.length) {
-                pathTile.x = path[i].col * 8;
-                pathTile.y = path[i].row * 12;
+                pathTile.x = path[i].col * baseTileWidth;
+                pathTile.y = path[i].row * baseTileHeight;
                 pathTile.setAlpha(1);
                 if (this.world.hero.gunAimed) {
                     pathTile.setTint(0xff0000);

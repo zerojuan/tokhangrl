@@ -1,7 +1,7 @@
 import { WALL, DOOR, DIRT_ROAD, ROAD } from "../constants";
 
 export default class Tile {
-    visibility = 0.2;
+    visibility = 0;
     solid = false;
     ground = true;
     value = -1;

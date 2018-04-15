@@ -47,8 +47,8 @@ function generate() {
 
     let objects = [];
 
-    createRoad(level, 0, 25, E, 4, 160);
-    createRoad(level, COLS / 2, 0, S, 2, 45);
+    createRoad(level, 0, 25, E, 4, COLS);
+    createRoad(level, COLS / 2, 0, S, 2, ROWS);
 
     const rooms = [];
     const firstRoom = new Room({
