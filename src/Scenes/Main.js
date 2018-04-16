@@ -13,8 +13,8 @@ import {
 } from "../constants";
 
 // TODO: double the sprite size
-const baseTileWidth = 8 * 2;
-const baseTileHeight = 12 * 2;
+const baseTileWidth = 8;
+const baseTileHeight = 12;
 
 class MainScene extends Phaser.Scene {
     constructor(world, onCreateDone) {
@@ -78,7 +78,6 @@ class MainScene extends Phaser.Scene {
                             "atlas",
                             this.world.level[x][y].value
                         )
-                        .setScale(2)
                         .setAlpha(0)
                         .setOrigin(0, 0)
                         .setTint(0x00ff00)
@@ -91,7 +90,6 @@ class MainScene extends Phaser.Scene {
                 this.add
                     .image(-5 * baseTileWidth, -5 * baseTileHeight, "atlas", 6)
                     .setAlpha(0)
-                    .setScale(2)
                     .setOrigin(0, 0)
                     .setTint(0x0000ff)
             );
@@ -104,7 +102,6 @@ class MainScene extends Phaser.Scene {
                     "chars",
                     1
                 )
-                .setScale(2)
                 .setOrigin(0, 0);
         });
 
@@ -116,7 +113,6 @@ class MainScene extends Phaser.Scene {
                     "atlas",
                     thing.value
                 )
-                .setScale(2)
                 .setOrigin(0, 0);
         });
 
@@ -127,7 +123,6 @@ class MainScene extends Phaser.Scene {
                 "chars",
                 HERO
             )
-            .setScale(2)
             .setOrigin(0, 0);
         this.text = this.add
             .text(120, 50, "What", {

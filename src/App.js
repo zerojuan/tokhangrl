@@ -113,7 +113,10 @@ export default class App extends React.Component {
 
     handleHovered(x, y) {
         // check if this is part of the world
-        if (this.state.world.level[x][y] !== undefined) {
+        if (
+            this.state.world.level[x] !== undefined &&
+            this.state.world.level[x][y] !== undefined
+        ) {
             this.setState(prevState => {
                 if (prevState.isMoving) {
                     return;
