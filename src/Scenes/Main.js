@@ -13,8 +13,8 @@ import {
 } from "../constants";
 
 // TODO: double the sprite size
-const baseTileWidth = 8;
-const baseTileHeight = 12;
+const baseTileWidth = 16; //8;
+const baseTileHeight = 16; //12;
 
 class MainScene extends Phaser.Scene {
     constructor(world, onCreateDone) {
@@ -44,12 +44,12 @@ class MainScene extends Phaser.Scene {
 
     preload() {
         this.load.spritesheet("atlas", "assets/tokhang-rl.png", {
-            frameWidth: 8,
-            frameHeight: 12
+            frameWidth: 16,
+            frameHeight: 16
         });
         this.load.spritesheet("chars", "assets/tokhang-chars.png", {
-            frameWidth: 8,
-            frameHeight: 12
+            frameWidth: 16,
+            frameHeight: 16
         });
     }
 

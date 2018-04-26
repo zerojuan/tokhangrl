@@ -19,7 +19,9 @@ export default class PlayerHud extends React.Component {
                     tile={this.props.tileInfo ? this.props.tileInfo.tile : null}
                 />
                 <Divider>Target</Divider>
-                <PersonInfo person={this.props.target} />
+                {this.props.target ? (
+                    <PersonInfo person={this.props.target} />
+                ) : null}
 
                 {this.props.tileInfo ? (
                     <div>
@@ -34,9 +36,7 @@ export default class PlayerHud extends React.Component {
                             ""
                         )}
                     </div>
-                ) : (
-                    ""
-                )}
+                ) : null}
             </div>
         );
     }
