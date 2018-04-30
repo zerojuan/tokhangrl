@@ -25,6 +25,7 @@ import Tile from "./Tile";
 import Thing from "./Thing";
 import Room from "./Room";
 import LeaveAction from "./actions/LeaveAction";
+import { createPeoples } from "./PopulationGenerator";
 
 import {
     isRoomWithinBounds,
@@ -104,27 +105,17 @@ function generate() {
     // objects = [...objects, ...room1.doors, ...room2.doors, ...room3.doors];
 
     rooms = [...createHouses({ largeCount: 10, smallCount: 20 }, level)];
+    console.log(`Created ${rooms.length} houses`);
 
     objects = objects.concat(...rooms.map(room => room.doors));
 
-    const people = [];
+    let people = [];
 
+    // TODO: create random people based on how many houses there were
+    // generate how many houses
     // create random people
-    // for (let i = 0; i < 15; i++) {
-    //     const randomFirstName =
-    //         Names.maleNames[Math.floor(Math.random() * Names.maleNames.length)];
-    //     const randomLastName =
-    //         Names.lastNames[Math.floor(Math.random() * Names.lastNames.length)];
-    //     const person = new People({
-    //         name: `${randomFirstName} ${randomLastName}`,
-    //         type: MAN,
-    //         x: Math.floor(Math.random() * COLS),
-    //         y: Math.floor(Math.random() * ROWS)
-    //     });
-    //     people.push(person);
-    // }
+    people = createPeoples({ houses: rooms }, level);
 
-    // create random exit objects and doors?
     // create exists
     const exits = [
         {
@@ -279,7 +270,6 @@ function createBlock(
         }
     }
 
-    console.log("Rooms?", rooms);
     return rooms;
 }
 

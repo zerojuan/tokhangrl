@@ -42,6 +42,10 @@ export default class Room {
         return this._height;
     }
 
+    get area() {
+        return this._width * this._height;
+    }
+
     constructor({ width, height, x, y }) {
         this._width = width;
         this._height = height;

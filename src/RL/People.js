@@ -1,4 +1,4 @@
-import { N, S, E, W, ROWS, COLS } from "../constants";
+import { N, S, E, W, ROWS, COLS, MAN } from "../constants";
 import { SHOOT, FREEZE, ARREST, TALK, CANCEL, LEAVE } from "../constants";
 import { findPath } from "./Pathfinder";
 import CancelAction from "./actions/CancelAction";
@@ -26,11 +26,17 @@ export default class People {
         name: "Housewife"
     };
 
-    constructor({ name, type, x, y }) {
+    relations = [];
+
+    gender = MAN;
+
+    constructor({ name, type, x, y, age }) {
         this._name = name;
         this.x = x;
         this.y = y;
         this.type = type;
+        this.gender = type;
+        this._age = age;
 
         this.activeAction = null;
     }

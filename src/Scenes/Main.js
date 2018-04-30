@@ -100,7 +100,7 @@ class MainScene extends Phaser.Scene {
                     person.position.x * baseTileWidth,
                     person.position.y * baseTileHeight,
                     "chars",
-                    1
+                    person.type
                 )
                 .setOrigin(0, 0);
         });
@@ -201,6 +201,8 @@ class MainScene extends Phaser.Scene {
             this.characters[i].setAlpha(
                 world.level[person.x][person.y].visibility
             );
+
+            // TODO: set sprite animation depend on state of the person
         });
 
         // this.hero.x = this.world.hero.x * 8;
