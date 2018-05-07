@@ -169,6 +169,22 @@ const femaleNames = [
     "Alma"
 ];
 
+function randomName(namesList) {
+    return namesList[Math.floor(Math.random() * namesList.length)];
+}
+
+export function randomMaleName() {
+    return randomName(maleNames);
+}
+
+export function randomFemaleName() {
+    return randomName(femaleNames);
+}
+
+export function randomLastName() {
+    return randomName(lastNames);
+}
+
 export default {
     lastNames,
     maleNames,
