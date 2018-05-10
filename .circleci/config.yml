@@ -26,19 +26,24 @@ jobs:
       - run:
           name: Copy dist to the workspace directory
           command: cp -r dist /tmp/workspace
+      - run:
+          name: Copy build scripts to workspace
+          command: cp -r build /tmp/workspace
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
             - dist
+            - build
   deploy:
     docker:
       - image: google/cloud-sdk
     steps:
+      - checkout
       - attach_workspace:
-          at: /tmp/workspace/dist
+          at: /tmp/workspace
       - run:
           name: Initialize gcloud
-          command: ./build/authgcloud.sh
+          command: /tmp/workspace/build/authgcloud.sh
       - run:
           name: list files
           command: ls /tmp/workspace/dist
