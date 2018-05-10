@@ -18,21 +18,21 @@ jobs:
           name: Try to install
           command: npm run build
       - persist_to_workspace:
-          root: workspace
+          root: dist
           paths:
-          - dist
+          - *
   deploy:
     docker:
       - image: google/cloud-sdk
     steps:
       - attach_workspace:
-          at: /tmp/workspace
+          at: dist
       - run:
           name: Initialize gcloud
           command: ./deploy.sh
       - run:
           name: list files
-          command: ls /tmp/workspace
+          command: ls dist
 workflows:
   version: 2
   build_deploy:
