@@ -28,7 +28,7 @@ jobs:
 workflows:
   version: 2
   build_deploy:
-    jobs:w
+    jobs:
       - build
       - deploy:
           requires:
