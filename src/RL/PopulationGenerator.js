@@ -18,6 +18,7 @@ function createFamily(house) {
         x: Math.floor(Math.random() * COLS),
         y: Math.floor(Math.random() * ROWS)
     });
+    father.house = house;
 
     const mother = new People({
         name: `${motherName} ${familyName}`,
@@ -26,6 +27,7 @@ function createFamily(house) {
         x: Math.floor(Math.random() * COLS),
         y: Math.floor(Math.random() * ROWS)
     });
+    mother.house = house;
 
     // check how many possible children
 
@@ -51,4 +53,14 @@ export function createPeoples({ houses }, level) {
     console.log("Possible Population:", family);
 
     return families.reduce((arr, val) => arr.concat(val), []);
+}
+
+export function setInitialPositions({ houses, people }, level) {
+    // set the peoples initial location
+    people.forEach(person => {
+        person.x = person.house.x;
+        person.y = person.house.y;
+    });
+
+    return people;
 }

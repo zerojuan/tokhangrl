@@ -25,7 +25,7 @@ import Tile from "./Tile";
 import Thing from "./Thing";
 import Room from "./Room";
 import LeaveAction from "./actions/LeaveAction";
-import { createPeoples } from "./PopulationGenerator";
+import { createPeoples, setInitialPositions } from "./PopulationGenerator";
 
 import {
     isRoomWithinBounds,
@@ -67,43 +67,6 @@ function generate() {
 
     // make how many large houses
 
-    // const room1 = new Room({
-    //     x: 15,
-    //     y: 15,
-    //     width: 4,
-    //     height: 4
-    // });
-
-    // const room2 = new Room({
-    //     x: 16,
-    //     y: 17,
-    //     width: 4,
-    //     height: 4
-    // });
-
-    // const room3 = new Room({
-    //     x: 12,
-    //     y: 14,
-    //     width: 4,
-    //     height: 4
-    // });
-    // rooms.push(room1);
-    // rooms.push(room2);
-    // rooms.push(room3);
-    // rooms.forEach(room => {
-    //     room.draw(level);
-    // });
-
-    // room1.createDoor(N, level);
-    // room1.createDoor(S, level);
-
-    // room2.createDoor(E, level);
-    // room2.createDoor(S, level);
-
-    // room3.createDoor(W, level);
-
-    // objects = [...objects, ...room1.doors, ...room2.doors, ...room3.doors];
-
     rooms = [...createHouses({ largeCount: 10, smallCount: 20 }, level)];
     console.log(`Created ${rooms.length} houses`);
 
@@ -116,6 +79,7 @@ function generate() {
     // create random people
     people = createPeoples({ houses: rooms }, level);
 
+    setInitialPositions({ houses: rooms, people }, level);
     // create exists
     const exits = [
         {

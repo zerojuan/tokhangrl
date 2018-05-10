@@ -21,6 +21,8 @@ export default class People {
 
     infoLevel = 0;
 
+    house = null;
+
     occupation = {
         type: 3,
         name: "Housewife"
