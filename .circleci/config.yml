@@ -1,16 +1,26 @@
 version: 2
+defaults:
+  working_directory: /tmp
 jobs:
   build:
     docker:
       - image: circleci/node:chakracore-8.11.1
     steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Try to install
           command: npm run build
-      # - persist_to_workspace:
-      #     root: workspace
-      #     paths:
-      #     - dist
+      - persist_to_workspace:
+          root: workspace
+          paths:
+          - dist
   deploy:
     docker:
       - image: google/cloud-sdk
