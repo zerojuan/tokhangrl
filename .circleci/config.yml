@@ -7,6 +7,9 @@ jobs:
       - image: circleci/node:chakracore-8.11.1
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Install dependencies
           command: npm install
@@ -35,7 +38,7 @@ jobs:
           at: /tmp/workspace/dist
       - run:
           name: Initialize gcloud
-          command: ./deploy.sh
+          command: ./build/authgcloud.sh
       - run:
           name: list files
           command: ls /tmp/workspace/dist
