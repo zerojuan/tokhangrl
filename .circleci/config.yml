@@ -22,7 +22,7 @@ jobs:
           command: mkdir /tmp/workspace
       - run:
           name: Copy dist to the workspace directory
-          command: cp dist /tmp/workspace/dist
+          command: cp -r dist /tmp/workspace
       - persist_to_workspace:
           root: /tmp/workspace
           paths:
