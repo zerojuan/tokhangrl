@@ -1,4 +1,6 @@
 #!/bin/bash
 
 echo "Copying build to Storage"
-gsutil rsync -R /tmp/workspace/dist gs://tokhang.nginamo.com
+gsutil defacl ch -u AllUsers:READER gs://$STORAGE_BUCKET
+gsutil rm gs://$STORAGE_BUCKET
+gsutil rsync -R /tmp/workspace/dist gs://$STORAGE_BUCKET

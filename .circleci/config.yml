@@ -37,6 +37,8 @@ jobs:
   deploy:
     docker:
       - image: google/cloud-sdk
+        environment:
+          STORAGE_BUCKET: tokhang.nginamo.com
     steps:
       - attach_workspace:
           at: /tmp/workspace
