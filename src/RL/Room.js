@@ -146,18 +146,16 @@ export default class Room {
     getOpenSpots(level) {
         const { _x: x, _y: y, _height: height, _width: width } = this;
 
+        const openSpots = [];
         for (let iX = x; iX < x + width; iX++) {
-            for (let iY = y; iY < y + height; iy++) {
-                // is this a door?
-                const door = this._doors.find(d => {
-                    return d.position.x === iX && d.position.y === iY;
-                });
-
-                if (door) {
-                    continue;
+            for (let iY = y; iY < y + height; iY++) {
+                if (!level[iX][iY].solid) {
+                    openSpots.push(level[iX][iY]);
                 }
             }
         }
+
+        return openSpots;
     }
 
     draw(level) {

@@ -58,8 +58,10 @@ export function createPeoples({ houses }, level) {
 export function setInitialPositions({ houses, people }, level) {
     // set the peoples initial location
     people.forEach(person => {
-        person.x = person.house.x;
-        person.y = person.house.y;
+        const openSpots = person.house.getOpenSpots(level);
+
+        person.x = openSpots[0].x;
+        person.y = openSpots[0].y;
     });
 
     return people;
