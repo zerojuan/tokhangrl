@@ -50,7 +50,7 @@ function canSee(start, end, visionRadius, map) {
     for (let i = 0; i < line.length; i++) {
         let point = line[i];
         if (
-            map[point.row][point.col].ground ||
+            !map[point.row][point.col].solid ||
             (point.row == wy && point.col == wx)
         )
             continue;

@@ -143,6 +143,23 @@ export default class Room {
         return `${this.x}, ${this.y}, ${this.width}, ${this.height}`;
     }
 
+    getOpenSpots(level) {
+        const { _x: x, _y: y, _height: height, _width: width } = this;
+
+        for (let iX = x; iX < x + width; iX++) {
+            for (let iY = y; iY < y + height; iy++) {
+                // is this a door?
+                const door = this._doors.find(d => {
+                    return d.position.x === iX && d.position.y === iY;
+                });
+
+                if (door) {
+                    continue;
+                }
+            }
+        }
+    }
+
     draw(level) {
         const x = this._x;
         const y = this._y;

@@ -42,13 +42,11 @@ export default class DoorAction {
             this._host.value = DOOR_OPEN;
 
             tile.solid = false;
-            tile.ground = true;
         } else {
             result.msg = "Door is now closed";
             this._host.value = DOOR;
 
             tile.solid = true;
-            tile.ground = false;
         }
         return result;
     }

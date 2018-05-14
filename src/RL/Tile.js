@@ -2,8 +2,8 @@ import { WALL, DOOR, DIRT_ROAD, ROAD } from "../constants";
 
 export default class Tile {
     visibility = 0;
-    solid = false;
-    ground = true;
+    solid = false; //wether the person can see through this tile
+    ground = true; //wether this tile is walkable
     value = -1;
     x = 0;
     y = 0;
