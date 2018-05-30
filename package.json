@@ -8,16 +8,14 @@
         "build": "webpack --config webpack.production.config.js",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
-    "keywords": [
-        "tokhang",
-        "roguelike"
-    ],
+    "keywords": ["tokhang", "roguelike"],
     "author": "Julius",
     "license": "ISC",
     "dependencies": {
         "antd": "^3.2.3",
         "element-react": "^1.4.8",
         "element-theme-default": "^1.4.13",
+        "fluent-behavior-tree": "^1.2.6",
         "phaser": "^3.1.2",
         "react": "^16.2.0",
         "react-dom": "^16.2.0",
