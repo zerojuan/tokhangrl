@@ -120,9 +120,12 @@ export default class World {
             this.currentIndex = 0;
         } else {
             this._hero.move(currentMove);
-            this.currentIndex++;
-        }
 
+            this.currentIndex++;
+            if (this._path.length === this.currentIndex) {
+                isMoving = false; // stop moving if there's no more paths left
+            }
+        }
         return {
             isMoving,
             history

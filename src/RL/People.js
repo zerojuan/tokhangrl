@@ -7,6 +7,8 @@ import ArrestAction from "./actions/ArrestAction";
 import TalkAction from "./actions/TalkAction";
 import FreezeAction from "./actions/FreezeAction";
 
+import PersonBehaviour from "../ai/PersonBehaviour";
+
 export default class People {
     _age = 25;
     following = null; // person this person is trying to follow
@@ -32,6 +34,10 @@ export default class People {
 
     gender = MAN;
 
+    behaviour = null;
+
+    destination = null;
+
     constructor({ name, type, x, y, age }) {
         this._name = name;
         this.x = x;
@@ -41,12 +47,19 @@ export default class People {
         this._age = age;
 
         this.activeAction = null;
+
+        this.behaviour = PersonBehaviour(this);
     }
 
     moveRandom() {
         // pick random direction
         const direction = Math.floor(Math.random() * 3);
         this.move(direction);
+    }
+
+    moveToPosition({ row, col }) {
+        this.x = col;
+        this.y = row;
     }
 
     move(direction) {
@@ -72,18 +85,15 @@ export default class People {
             const message = this.activeAction.doAction();
             this.activeAction = null;
             return message;
-        } else {
-            // if (Math.random() * 50 < 25) {
-            //     this.moveRandom();
-            //     return { msg: `${this.name} has moved randomly` };
-            // }
-            // return null;
         }
 
         if (this.following) {
-            // follow this person
-            this.doFollow(world);
+            // follow this perDson
+            return this.doFollow(world);
         }
+
+        // else do default behaviour
+        this.behaviour.tick(world);
     }
 
     doFollow(world) {

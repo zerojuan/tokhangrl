@@ -156,6 +156,7 @@ class MainScene extends Phaser.Scene {
         this.text.setText(
             `The turn: ${this.turn}, ${this.mouseX}, ${this.mouseY}`
         );
+        this.redrawWorld();
     }
 
     setTurn() {
@@ -170,8 +171,8 @@ class MainScene extends Phaser.Scene {
         this.onHoverHandler = hoverHandler;
     }
 
-    updateWorld(world) {
-        this.world = world;
+    redrawWorld() {
+        const { world } = this;
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
                 this.tiles[x][y].setTexture("atlas", world.level[x][y].value);
@@ -214,6 +215,10 @@ class MainScene extends Phaser.Scene {
             ease: "Power1",
             duration: 150
         });
+    }
+
+    updateWorld(world) {
+        this.world = world;
     }
 
     updatePath(path) {
