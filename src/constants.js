@@ -31,3 +31,6 @@ export const DOOR_ACTION = "doorAction";
 
 export const STATE_LEVEL_ACTION = "stateLevelAction";
 export const OBJECT_LEVEL_ACTION = "objectLevelAction";
+
+export const BASE_TILE_WIDTH = 16;
+export const BASE_TILE_HEIGHT = 16;

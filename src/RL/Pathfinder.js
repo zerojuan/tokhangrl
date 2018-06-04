@@ -63,7 +63,7 @@ function getNeighbors(node, map) {
         //console.log("(", node.col, node.row, ")(", node.col+dir[i][0], node.row+dir[i][1], ")");
         const p = map[node.col + dir[i][0]][node.row + dir[i][1]];
 
-        if (!p || p.solid) {
+        if (!p || p.solid || p.occupied) {
             continue;
         }
 
@@ -110,7 +110,11 @@ export function findPath(start, end, map) {
         parent: null
     });
 
-    if (!map[end.col][end.row] || map[end.col][end.row].solid) {
+    if (
+        !map[end.col][end.row] ||
+        map[end.col][end.row].solid ||
+        map[end.col][end.row].occupied
+    ) {
         return null;
     }
 

@@ -23,6 +23,9 @@ export default class People {
 
     infoLevel = 0;
 
+    maxIdle = 20;
+    idleTurns = 0;
+
     house = null;
 
     occupation = {
@@ -37,6 +40,8 @@ export default class People {
     behaviour = null;
 
     destination = null;
+
+    world = null;
 
     constructor({ name, type, x, y, age }) {
         this._name = name;
@@ -58,19 +63,41 @@ export default class People {
     }
 
     moveToPosition({ row, col }) {
+        if (!this.world) {
+            console.error("Attempted to move person, but world is not defined");
+            return;
+        }
+
+        // set previous position to un-occupied
+        this.world.unoccupyTile({ row: this.y, col: this.x });
+
         this.x = col;
         this.y = row;
+        // set new position to occupied
+        this.world.occupyTile({ row, col });
     }
 
     move(direction) {
         if (direction === N) {
-            this.y = Math.max(0, this.y - 1);
+            this.moveToPosition({
+                row: Math.max(0, this.y - 1),
+                col: this.x
+            });
         } else if (direction === S) {
-            this.y = Math.min(ROWS - 1, this.y + 1);
+            this.moveToPosition({
+                row: Math.min(ROWS - 1, this.y + 1),
+                col: this.x
+            });
         } else if (direction === E) {
-            this.x = Math.min(COLS - 1, this.x + 1);
+            this.moveToPosition({
+                row: this.y,
+                col: Math.min(COLS - 1, this.x + 1)
+            });
         } else if (direction === W) {
-            this.x = Math.max(0, this.x - 1);
+            this.moveToPosition({
+                row: this.y,
+                col: Math.max(0, this.x - 1)
+            });
         }
     }
 
@@ -79,6 +106,7 @@ export default class People {
     }
 
     do(world) {
+        this.world = world;
         if (this.activeAction) {
             // better send a history report
 
@@ -114,6 +142,8 @@ export default class People {
             if (currentMove.col === target.x && currentMove.row === target.y) {
                 return;
             }
+
+            // if position is already occupied don't go there
             if (
                 world.people.some(
                     person =>
@@ -124,8 +154,7 @@ export default class People {
                 return;
             }
 
-            this.x = currentMove.col;
-            this.y = currentMove.row;
+            this.moveToPosition(currentMove);
         }
     }
 
@@ -142,7 +171,7 @@ export default class People {
 
     get info() {
         // construct info based on info level
-        const infoList = [];
+        const infoList = [this.currentBehaviour];
         return infoList;
     }
 

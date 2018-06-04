@@ -73,6 +73,20 @@ export default class World {
         return x === 0 || y === 0 || x === COLS || y === ROWS;
     }
 
+    hasPerson(position) {
+        return this._people.some(
+            person => position.col === person.x && position.row === person.y
+        );
+    }
+
+    unoccupyTile(position) {
+        this._level[position.col][position.row].occupied = false;
+    }
+
+    occupyTile(position) {
+        this._level[position.col][position.row].occupied = true;
+    }
+
     tick() {
         let isMoving = false;
         let history = [];

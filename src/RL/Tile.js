@@ -4,6 +4,7 @@ export default class Tile {
     visibility = 0;
     solid = false; //wether the person can see through this tile
     ground = true; //wether this tile is walkable
+    occupied = false; //wether a person or object occupies this tile
     value = -1;
     x = 0;
     y = 0;

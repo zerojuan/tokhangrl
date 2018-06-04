@@ -9,12 +9,16 @@ import {
     BLOCK,
     HERO,
     ROWS,
-    COLS
+    COLS,
+    BASE_TILE_WIDTH,
+    BASE_TILE_HEIGHT
 } from "../constants";
 
+import DebugHelper from "./DebugHelper";
+
 // TODO: double the sprite size
-const baseTileWidth = 16; //8;
-const baseTileHeight = 16; //12;
+const baseTileWidth = BASE_TILE_WIDTH; //8;
+const baseTileHeight = BASE_TILE_HEIGHT; //12;
 
 class MainScene extends Phaser.Scene {
     constructor(world, onCreateDone) {
@@ -149,6 +153,15 @@ class MainScene extends Phaser.Scene {
             this.onClickHandler(this.mouseX, this.mouseY);
         });
 
+        this.keyDebug = this.input.keyboard.addKey(
+            Phaser.Input.Keyboard.KeyCodes.D
+        );
+
+        this.debugHelper = DebugHelper(this, {
+            tileWidth: baseTileWidth,
+            tileHeight: baseTileHeight
+        });
+
         this.onCreateDone();
     }
 
@@ -156,7 +169,18 @@ class MainScene extends Phaser.Scene {
         this.text.setText(
             `The turn: ${this.turn}, ${this.mouseX}, ${this.mouseY}`
         );
+
+        this.debug(this.keyDebug.isDown);
+
         this.redrawWorld();
+    }
+
+    debug(show) {
+        if (show) {
+            this.debugHelper.showDebug(this.world);
+        } else {
+            this.debugHelper.hideDebug();
+        }
     }
 
     setTurn() {

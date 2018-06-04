@@ -15,6 +15,10 @@ export default class PersonInfo extends React.Component {
                     description={`${person.age}, ${person.occupation.name}`}
                 />
                 {person.name}
+                <br />
+                {person.info.map((info, i) => {
+                    return <span key={i}>{info}</span>;
+                })}
             </Card>
         );
     }

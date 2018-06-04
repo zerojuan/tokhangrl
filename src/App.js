@@ -29,7 +29,6 @@ export default class App extends React.Component {
     }
 
     doMove = () => {
-        console.log("TICKING");
         const { isMoving, history } = this.state.world.tick();
         if (isMoving) {
             this.setState(prevState => {
