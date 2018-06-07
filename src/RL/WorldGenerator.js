@@ -222,13 +222,13 @@ function createBlock(
             roomFound = withinBounds && !overlaps && !isTooClose;
 
             if (roomFound) {
-                console.log("Room:", room.x, room.y);
+                // console.log("Room:", room.x, room.y);
                 rooms.push(room);
             }
 
             maxCount++;
             if (maxCount > 10) {
-                console.log("Breaking");
+                // console.log("Breaking");
                 break;
             }
         }

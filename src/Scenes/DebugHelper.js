@@ -5,8 +5,8 @@ import { ROWS, COLS } from "../constants";
 export default function(scene, { tileWidth, tileHeight }) {
     const graphics = scene.add.graphics({
         lineStyle: {
-            width: 2,
-            color: "#f0ff00"
+            width: 10,
+            color: "#00ff00"
         }
     });
 
@@ -21,22 +21,22 @@ export default function(scene, { tileWidth, tileHeight }) {
     };
 
     const showDebug = function(world) {
-        graphics.clear();
+        // graphics.clear();
 
-        for (let y = 0; y < ROWS; y++) {
-            for (let x = 0; x < COLS; x++) {
-                const point = toWorldPoint(x, y);
-                if (world.level[x][y].occupied) {
-                    circle.setTo(point.x, point.y, tileHeight / 4);
-                    graphics.fillStyle(0xff0000);
-                    graphics.fillCircleShape(circle);
-                } else if (world.level[x][y].solid) {
-                    circle.setTo(point.x, point.y, tileHeight / 4);
-                    graphics.fillStyle(0x330000);
-                    graphics.fillCircleShape(circle);
-                }
-            }
-        }
+        // for (let y = 0; y < ROWS; y++) {
+        //     for (let x = 0; x < COLS; x++) {
+        //         const point = toWorldPoint(x, y);
+        //         if (world.level[x][y].occupied) {
+        //             circle.setTo(point.x, point.y, tileHeight / 4);
+        //             graphics.fillStyle(0xff0000);
+        //             graphics.fillCircleShape(circle);
+        //         } else if (world.level[x][y].solid) {
+        //             circle.setTo(point.x, point.y, tileHeight / 4);
+        //             graphics.fillStyle(0x330000);
+        //             graphics.fillCircleShape(circle);
+        //         }
+        //     }
+        // }
 
         world.people.forEach(person => {
             const point = toWorldPoint(person.x, person.y);
@@ -48,9 +48,10 @@ export default function(scene, { tileWidth, tileHeight }) {
 
             if (person.destination) {
                 const destinationPoint = toWorldPoint(
-                    person.destination.x,
-                    person.destination.y
+                    person.destination.col,
+                    person.destination.row
                 );
+                console.log(destinationPoint);
                 circle.setTo(
                     destinationPoint.x,
                     destinationPoint.y,
