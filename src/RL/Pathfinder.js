@@ -1,3 +1,4 @@
+// TODO: optimize AI pathfinder
 const diagonalCost = 14;
 
 function sortByScore(a, b) {
