@@ -9,7 +9,8 @@ const config = {
     entry: `${APP_DIR}/index.js`,
     output: {
         path: BUILD_DIR,
-        filename: "bundle.js"
+        filename: "bundle.js",
+        publicPath: "/"
     },
     mode: "development",
     devtool: "cheap-source-map",
@@ -48,7 +49,8 @@ const config = {
     devServer: {
         contentBase: BUILD_DIR,
         port: 8080,
-        stats: "minimal"
+        stats: "minimal",
+        historyApiFallback: true
     }
 };
 
