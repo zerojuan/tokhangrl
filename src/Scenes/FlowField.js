@@ -17,12 +17,12 @@ class Cell {
     col = 0;
     passable = false;
     constructor({ row, col, passable }) {
-        this.row = row;
-        this.col = col;
-        this.x = parseInt(col);
-        this.y = parseInt(row);
+        this.row = parseInt(row);
+        this.col = parseInt(col);
+        this.x = this.col;
+        this.y = this.row;
         this.passable = !passable;
-        this.distance = null;
+        this.distance = !this.passable ? 99 : null;
     }
 }
 
@@ -41,7 +41,7 @@ export default class FlowField extends Phaser.Scene {
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [0, 0, 1, 1, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -52,20 +52,18 @@ export default class FlowField extends Phaser.Scene {
 
     create() {
         // generate a random grid
-        for (let col in this.cells) {
-            this.world[col] = [];
-            for (let row in this.cells[col]) {
-                this.world[col].push(
+        for (let row in this.cells) {
+            this.world[row] = [];
+            for (let col in this.cells[row]) {
+                this.world[row].push(
                     new Cell({
                         row,
                         col,
-                        passable: this.cells[col][row]
+                        passable: this.cells[row][col]
                     })
                 );
             }
         }
-
-        console.log(this.world);
 
         this.text = this.add
             .text(120, 50, "What", {
@@ -76,52 +74,81 @@ export default class FlowField extends Phaser.Scene {
 
         this.graphics = this.add.graphics({
             lineStyle: {
-                width: 10,
+                width: 1,
                 color: "#00ff00"
             }
         });
 
-        this.generateDijkstraGrid();
+        this.generateDijkstraGrid({ destX: 5, destY: 2 });
+        this.updateLabels();
 
+        this.input.on("pointerdown", event => {
+            // clicked on this
+            this.mouseX = Math.floor(event.x / CELL_WIDTH);
+            this.mouseY = Math.floor(event.y / CELL_HEIGHT);
+
+            this.generateDijkstraGrid({
+                destX: this.mouseX,
+                destY: this.mouseY
+            });
+
+            this.updateLabels();
+        });
+    }
+
+    updateLabels() {
         for (let row in this.world) {
             for (let col in this.world[row]) {
                 const cell = this.world[row][col];
-                console.log(cell.distance);
-                cell.text = this.add.text(
-                    col * CELL_WIDTH,
-                    row * CELL_HEIGHT,
-                    cell.distance
-                );
+                if (!cell.text) {
+                    cell.text = this.add.text(
+                        col * CELL_WIDTH,
+                        row * CELL_HEIGHT,
+                        cell.distance
+                    );
+                }
+                cell.text.setText(cell.distance);
             }
         }
     }
 
-    generateDijkstraGrid() {
-        function neighboursOf(v) {
+    generateDijkstraGrid({ destX = 0, destY = 0 }) {
+        const neighboursOf = v => {
             var res = [];
             if (v.x > 0) {
-                res.push(new Vector2(v.x - 1, v.y));
+                res.push(this.world[v.y][v.x - 1]);
+                // res.push(new Vector2(v.x - 1, v.y));
             }
             if (v.y > 0) {
-                res.push(new Vector2(v.x, v.y - 1));
+                res.push(this.world[v.y - 1][v.x]);
+                // res.push(new Vector2(v.x, v.y - 1));
             }
 
             if (v.x < WORLD_WIDTH - 1) {
-                res.push(new Vector2(v.x + 1, v.y));
+                res.push(this.world[v.y][v.x + 1]);
+                // res.push(new Vector2(v.x + 1, v.y));
             }
             if (v.y < WORLD_HEIGHT - 1) {
-                res.push(new Vector2(v.x, v.y + 1));
+                res.push(this.world[v.y + 1][v.x]);
+                // res.push(new Vector2(v.x, v.y + 1));
             }
 
             return res;
+        };
+
+        for (let row in this.world) {
+            for (let col in this.world[row]) {
+                const cell = this.world[row][col];
+                cell.distance = !cell.passable ? 99 : null;
+            }
         }
 
         const pathend = {
-            x: 5,
-            y: 2
+            x: destX,
+            y: destY
         };
 
-        this.world[pathend.y][pathend.x].weight = 0;
+        this.world[pathend.y][pathend.x].distance = 0;
         const toVisit = [this.world[pathend.y][pathend.x]];
 
         //for each node we need to visit, starting with the pathEnd
@@ -131,8 +158,9 @@ export default class FlowField extends Phaser.Scene {
             //for each neighbour of this node (only straight line neighbours, not diagonals)
             for (var j = 0; j < neighbours.length; j++) {
                 var n = neighbours[j];
-                console.log(n);
+
                 //We will only ever visit every node once as we are always visiting nodes in the most efficient order
+                console.log(this.world[n.y][n.x].distance);
                 if (this.world[n.y][n.x].distance === null) {
                     n.distance = toVisit[i].distance + 1;
                     this.world[n.y][n.x].distance = n.distance;
@@ -143,7 +171,7 @@ export default class FlowField extends Phaser.Scene {
     }
 
     update() {
-        this.graphics.clear();
+        // this.graphics.clear();
 
         for (let row in this.world) {
             for (let col in this.world[row]) {
