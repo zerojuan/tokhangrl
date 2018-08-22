@@ -26,6 +26,78 @@ class Cell {
     }
 }
 
+class Monster {
+    row = 0;
+    col = 0;
+    constructor({ row, col, scene }) {
+        this.row = parseInt(row);
+        this.col = parseInt(col);
+
+        this.x = this.col;
+        this.y = this.row;
+
+        this.scene = scene;
+        this.sprite = new Phaser.Geom.Circle(0, 0, 10);
+        this.update();
+    }
+
+    move(world) {
+        // get the neighbors
+        const currCell = world[this.y][this.x];
+        if (currCell.distance === 0) {
+            return;
+        }
+
+        const neighbors = getNeighbors(this, world);
+        let nearestNeighbor = neighbors[0];
+        for (const neighbor of neighbors) {
+            if (neighbor.distance === 0) {
+                nearestNeighbor = neighbor;
+                break;
+            }
+            if (neighbor.distance <= nearestNeighbor.distance) {
+                nearestNeighbor = neighbor;
+            }
+        }
+        this.x = nearestNeighbor.x;
+        this.y = nearestNeighbor.y;
+        // console.log(nearestNeighbor.distance);
+        this.col = this.x;
+        this.row = this.y;
+    }
+
+    update() {
+        this.sprite.setTo(
+            this.x * CELL_WIDTH + CELL_WIDTH / 2,
+            this.y * CELL_HEIGHT + CELL_HEIGHT / 2,
+            10
+        );
+    }
+}
+
+function getNeighbors(v, world) {
+    var res = [];
+    if (v.x > 0) {
+        res.push(world[v.y][v.x - 1]);
+        // res.push(new Vector2(v.x - 1, v.y));
+    }
+    if (v.y > 0) {
+        res.push(world[v.y - 1][v.x]);
+        // res.push(new Vector2(v.x, v.y - 1));
+    }
+
+    if (v.x < WORLD_WIDTH - 1) {
+        res.push(world[v.y][v.x + 1]);
+        // res.push(new Vector2(v.x + 1, v.y));
+    }
+    if (v.y < WORLD_HEIGHT - 1) {
+        res.push(world[v.y + 1][v.x]);
+        // res.push(new Vector2(v.x, v.y + 1));
+    }
+
+    return res;
+}
+
 export default class FlowField extends Phaser.Scene {
     square = new Phaser.Geom.Rectangle(0, 0, CELL_WIDTH, CELL_HEIGHT);
 
@@ -48,6 +120,8 @@ export default class FlowField extends Phaser.Scene {
         ];
 
         this.world = [];
+
+        this.monsters = [];
     }
 
     create() {
@@ -65,13 +139,6 @@ export default class FlowField extends Phaser.Scene {
             }
         }
 
-        this.text = this.add
-            .text(120, 50, "What", {
-                font: "bold 19px Arial",
-                fill: "#fff"
-            })
-            .setOrigin(0.5, 0.5);
-
         this.graphics = this.add.graphics({
             lineStyle: {
                 width: 1,
@@ -87,13 +154,49 @@ export default class FlowField extends Phaser.Scene {
             this.mouseX = Math.floor(event.x / CELL_WIDTH);
             this.mouseY = Math.floor(event.y / CELL_HEIGHT);
 
+            for (const monster of this.monsters) {
+                monster.y = Math.floor(Math.random() * WORLD_HEIGHT);
+                monster.x = Math.floor(Math.random() * WORLD_WIDTH);
+            }
+
+            const startTime = Date.now();
             this.generateDijkstraGrid({
                 destX: this.mouseX,
                 destY: this.mouseY
             });
+            this.text.setText(`TIME: ${Date.now() - startTime}ms`);
 
             this.updateLabels();
         });
+
+        this.text = this.add.text(5, 20, "What", {
+            font: "bold 12px Arial",
+            fill: "#000"
+        });
+
+        this.monsters = [];
+        for (let i = 0; i < 15; i++) {
+            const monster = new Monster({
+                row: Math.floor(Math.random() * WORLD_HEIGHT),
+                col: Math.floor(Math.random() * WORLD_WIDTH),
+                scene: this
+            });
+            this.monsters.push(monster);
+        }
+
+        this.turnEvent = this.time.addEvent({
+            delay: 100,
+            callback: this.onTurn,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    onTurn() {
+        // calculate monster steps
+        for (const monster of this.monsters) {
+            monster.move(this.world);
+        }
     }
 
     updateLabels() {
@@ -113,29 +216,6 @@ export default class FlowField extends Phaser.Scene {
     }
 
     generateDijkstraGrid({ destX = 0, destY = 0 }) {
-        const neighboursOf = v => {
-            var res = [];
-            if (v.x > 0) {
-                res.push(this.world[v.y][v.x - 1]);
-                // res.push(new Vector2(v.x - 1, v.y));
-            }
-            if (v.y > 0) {
-                res.push(this.world[v.y - 1][v.x]);
-                // res.push(new Vector2(v.x, v.y - 1));
-            }
-
-            if (v.x < WORLD_WIDTH - 1) {
-                res.push(this.world[v.y][v.x + 1]);
-                // res.push(new Vector2(v.x + 1, v.y));
-            }
-            if (v.y < WORLD_HEIGHT - 1) {
-                res.push(this.world[v.y + 1][v.x]);
-                // res.push(new Vector2(v.x, v.y + 1));
-            }
-
-            return res;
-        };
-
         for (let row in this.world) {
             for (let col in this.world[row]) {
                 const cell = this.world[row][col];
@@ -153,14 +233,13 @@ export default class FlowField extends Phaser.Scene {
 
         //for each node we need to visit, starting with the pathEnd
         for (let i = 0; i < toVisit.length; i++) {
-            var neighbours = neighboursOf(toVisit[i]);
+            var neighbours = getNeighbors(toVisit[i], this.world);
 
             //for each neighbour of this node (only straight line neighbours, not diagonals)
             for (var j = 0; j < neighbours.length; j++) {
                 var n = neighbours[j];
 
                 //We will only ever visit every node once as we are always visiting nodes in the most efficient order
-                console.log(this.world[n.y][n.x].distance);
                 if (this.world[n.y][n.x].distance === null) {
                     n.distance = toVisit[i].distance + 1;
                     this.world[n.y][n.x].distance = n.distance;
@@ -172,7 +251,6 @@ export default class FlowField extends Phaser.Scene {
 
     update() {
         // this.graphics.clear();
-
         for (let row in this.world) {
             for (let col in this.world[row]) {
                 const cell = this.world[row][col];
@@ -195,6 +273,12 @@ export default class FlowField extends Phaser.Scene {
                     this.square.height
                 );
             }
+        }
+
+        for (const monster of this.monsters) {
+            monster.update();
+            this.graphics.fillStyle(0xcc00cc);
+            this.graphics.fillCircleShape(monster.sprite);
         }
     }
 }
