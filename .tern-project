@@ -1,0 +1,11 @@
+{
+	"sourceType": "module",
+	"ecmaVersion": 7,
+	"libs": [
+		"ecma5",
+		"ecma6",
+		"ecma7"
+	],
+	"plugins": {},
+	"loadEagerly": []
+}

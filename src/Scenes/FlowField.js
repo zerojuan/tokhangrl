@@ -7,8 +7,8 @@ const WORLD_HEIGHT = 8;
 
 class Vector2 {
     constructor(x, y) {
-        this.x = parseInt(x);
-        this.y = parseInt(y);
+        this.x = parseInt(x, 10);
+        this.y = parseInt(y, 10);
     }
 }
 
@@ -30,8 +30,8 @@ class Monster {
     row = 0;
     col = 0;
     constructor({ row, col, scene }) {
-        this.row = parseInt(row);
-        this.col = parseInt(col);
+        this.row = parseInt(row, 10);
+        this.col = parseInt(col, 10);
 
         this.x = this.col;
         this.y = this.row;
@@ -41,7 +41,7 @@ class Monster {
         this.update();
     }
 
-    move(world) {
+    move(world, monsters) {
         // get the neighbors
         const currCell = world[this.y][this.x];
         if (currCell.distance === 0) {
@@ -51,14 +51,22 @@ class Monster {
         const neighbors = getNeighbors(this, world);
         let nearestNeighbor = neighbors[0];
         for (const neighbor of neighbors) {
-            if (neighbor.distance === 0) {
+        	const monsterWeight = findMonsterOnCell( nearestNeighbor.x, nearestNeighbor.y, monsters ) ? 99 : 0;
+        	const totalDistance = neighbor.distance + monsterWeight;
+            if (totalDistance === 0) {
                 nearestNeighbor = neighbor;
                 break;
             }
-            if (neighbor.distance <= nearestNeighbor.distance) {
+            if (totalDistance <= nearestNeighbor.distance) {
                 nearestNeighbor = neighbor;
             }
         }
+        
+        // check if the nearestNeighbor has a monster in them
+//        if ( findMonsterOnCell( nearestNeighbor.x, nearestNeighbor.y, monsters ) ) {
+//        	return;
+//        }
+        
         this.x = nearestNeighbor.x;
         this.y = nearestNeighbor.y;
         // console.log(nearestNeighbor.distance);
@@ -96,6 +104,13 @@ function getNeighbors(v, world) {
     }
 
     return res;
+}
+
+function findMonsterOnCell(x,y, monsters) {
+	const m = monsters.find((monster) => {
+		return monster.x === x && monster.y === y;
+	});
+	return m;
 }
 
 export default class FlowField extends Phaser.Scene {
@@ -195,7 +210,7 @@ export default class FlowField extends Phaser.Scene {
     onTurn() {
         // calculate monster steps
         for (const monster of this.monsters) {
-            monster.move(this.world);
+            monster.move(this.world, this.monsters);
         }
     }
 
