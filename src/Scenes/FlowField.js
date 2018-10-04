@@ -23,18 +23,21 @@ class Cell {
         this.y = this.row;
         this.passable = !passable;
         this.distance = !this.passable ? 99 : null;
+        this.occupants = 0;
     }
 }
 
 class Monster {
     row = 0;
     col = 0;
-    constructor({ row, col, scene }) {
+    constructor({ row, col, color, scene }) {
         this.row = parseInt(row, 10);
         this.col = parseInt(col, 10);
 
         this.x = this.col;
         this.y = this.row;
+        
+        this.color = color;
 
         this.scene = scene;
         this.sprite = new Phaser.Geom.Circle(0, 0, 10);
@@ -51,7 +54,7 @@ class Monster {
         const neighbors = getNeighbors(this, world);
         let nearestNeighbor = neighbors[0];
         for (const neighbor of neighbors) {
-        	const monsterWeight = findMonsterOnCell( nearestNeighbor.x, nearestNeighbor.y, monsters ) ? 99 : 0;
+        	const monsterWeight = findMonsterOnCell( neighbor.x, neighbor.y, monsters ) ? 99 : 0;
         	const totalDistance = neighbor.distance + monsterWeight;
             if (totalDistance === 0) {
                 nearestNeighbor = neighbor;
@@ -108,7 +111,7 @@ function getNeighbors(v, world) {
 
 function findMonsterOnCell(x,y, monsters) {
 	const m = monsters.find((monster) => {
-		return monster.x === x && monster.y === y;
+		return monster.col === x && monster.row === y;
 	});
 	return m;
 }
@@ -194,6 +197,7 @@ export default class FlowField extends Phaser.Scene {
             const monster = new Monster({
                 row: Math.floor(Math.random() * WORLD_HEIGHT),
                 col: Math.floor(Math.random() * WORLD_WIDTH),
+                color: Math.random()*16777215,
                 scene: this
             });
             this.monsters.push(monster);
@@ -212,6 +216,18 @@ export default class FlowField extends Phaser.Scene {
         for (const monster of this.monsters) {
             monster.move(this.world, this.monsters);
         }
+        // update occupants in map
+        for (let row in this.world) {
+            for (let col in this.world[row]) {
+                const cell = this.world[row][col];
+                cell.occupants = 0;
+            }
+        }
+		for (const monster of this.monsters) {
+			const cell = this.world[monster.row][monster.col];
+			cell.occupants += 1;
+		}
+        
     }
 
     updateLabels() {
@@ -225,7 +241,7 @@ export default class FlowField extends Phaser.Scene {
                         cell.distance
                     );
                 }
-                cell.text.setText(cell.distance);
+                cell.text.setText(cell.distance + ' ' + cell.occupants);
             }
         }
     }
@@ -292,8 +308,10 @@ export default class FlowField extends Phaser.Scene {
 
         for (const monster of this.monsters) {
             monster.update();
-            this.graphics.fillStyle(0xcc00cc);
+            this.graphics.fillStyle(monster.color);
             this.graphics.fillCircleShape(monster.sprite);
         }
+        
+        this.updateLabels();
     }
 }
