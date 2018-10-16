@@ -221,8 +221,15 @@ class MainScene extends Phaser.Scene {
         });
 
         world.people.forEach((person, i) => {
-            this.characters[i].x = person.x * baseTileWidth;
-            this.characters[i].y = person.y * baseTileHeight;
+            this.tweens.add({
+                targets: this.characters[i],
+                x: person.x * baseTileWidth,
+                y: person.y * baseTileHeight,
+                ease: "Power1",
+                duration: 150
+            });
+            // this.characters[i].x = person.x * baseTileWidth;
+            // this.characters[i].y = person.y * baseTileHeight;
             this.characters[i].setAlpha(
                 world.level[person.x][person.y].visibility
             );

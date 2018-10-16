@@ -4,6 +4,7 @@ const CELL_WIDTH = 40;
 const CELL_HEIGHT = 40;
 const WORLD_WIDTH = 10;
 const WORLD_HEIGHT = 8;
+const MONSTER_COUNT = 10;
 
 class Vector2 {
     constructor(x, y) {
@@ -30,14 +31,15 @@ class Cell {
 class Monster {
     row = 0;
     col = 0;
-    constructor({ row, col, color, scene }) {
+    constructor({ row, col, color, name, scene }) {
         this.row = parseInt(row, 10);
         this.col = parseInt(col, 10);
 
         this.x = this.col;
         this.y = this.row;
-        
+
         this.color = color;
+        this.name = name;
 
         this.scene = scene;
         this.sprite = new Phaser.Geom.Circle(0, 0, 10);
@@ -47,15 +49,22 @@ class Monster {
     move(world, monsters) {
         // get the neighbors
         const currCell = world[this.y][this.x];
-        if (currCell.distance === 0) {
-            return;
-        }
+        // if (currCell.distance === 0) {
+        //     return;
+        // }
 
         const neighbors = getNeighbors(this, world);
         let nearestNeighbor = neighbors[0];
         for (const neighbor of neighbors) {
-        	const monsterWeight = findMonsterOnCell( neighbor.x, neighbor.y, monsters ) ? 99 : 0;
-        	const totalDistance = neighbor.distance + monsterWeight;
+            // if there's a monster in the destination, then add high cost to move there
+            const monsterWeight = findMonsterOnCell(
+                neighbor.x,
+                neighbor.y,
+                monsters
+            )
+                ? 99
+                : 0;
+            const totalDistance = neighbor.distance + monsterWeight;
             if (totalDistance === 0) {
                 nearestNeighbor = neighbor;
                 break;
@@ -64,12 +73,15 @@ class Monster {
                 nearestNeighbor = neighbor;
             }
         }
-        
-        // check if the nearestNeighbor has a monster in them
-//        if ( findMonsterOnCell( nearestNeighbor.x, nearestNeighbor.y, monsters ) ) {
-//        	return;
-//        }
-        
+
+        // the nearest neighbor happened to be occupied
+        if (
+            findMonsterOnCell(nearestNeighbor.x, nearestNeighbor.y, monsters) &&
+            nearestNeighbor.distance <= 3
+        ) {
+            return;
+        }
+
         this.x = nearestNeighbor.x;
         this.y = nearestNeighbor.y;
         // console.log(nearestNeighbor.distance);
@@ -89,31 +101,31 @@ class Monster {
 function getNeighbors(v, world) {
     var res = [];
     if (v.x > 0) {
-        res.push(world[v.y][v.x - 1]);
+        res.push(world[v.y][v.x - 1]); // west
         // res.push(new Vector2(v.x - 1, v.y));
     }
     if (v.y > 0) {
-        res.push(world[v.y - 1][v.x]);
+        res.push(world[v.y - 1][v.x]); // north
         // res.push(new Vector2(v.x, v.y - 1));
     }
 
     if (v.x < WORLD_WIDTH - 1) {
-        res.push(world[v.y][v.x + 1]);
+        res.push(world[v.y][v.x + 1]); // east
         // res.push(new Vector2(v.x + 1, v.y));
     }
     if (v.y < WORLD_HEIGHT - 1) {
-        res.push(world[v.y + 1][v.x]);
+        res.push(world[v.y + 1][v.x]); // south
         // res.push(new Vector2(v.x, v.y + 1));
     }
 
     return res;
 }
 
-function findMonsterOnCell(x,y, monsters) {
-	const m = monsters.find((monster) => {
-		return monster.col === x && monster.row === y;
-	});
-	return m;
+function findMonsterOnCell(x, y, monsters) {
+    const m = monsters.find(monster => {
+        return monster.col === x && monster.row === y;
+    });
+    return m;
 }
 
 export default class FlowField extends Phaser.Scene {
@@ -193,11 +205,12 @@ export default class FlowField extends Phaser.Scene {
         });
 
         this.monsters = [];
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < MONSTER_COUNT; i++) {
             const monster = new Monster({
                 row: Math.floor(Math.random() * WORLD_HEIGHT),
                 col: Math.floor(Math.random() * WORLD_WIDTH),
-                color: Math.random()*16777215,
+                color: Math.random() * 16777215,
+                name: i === 0 ? "juan" : "pedro",
                 scene: this
             });
             this.monsters.push(monster);
@@ -223,11 +236,10 @@ export default class FlowField extends Phaser.Scene {
                 cell.occupants = 0;
             }
         }
-		for (const monster of this.monsters) {
-			const cell = this.world[monster.row][monster.col];
-			cell.occupants += 1;
-		}
-        
+        for (const monster of this.monsters) {
+            const cell = this.world[monster.row][monster.col];
+            cell.occupants += 1;
+        }
     }
 
     updateLabels() {
@@ -241,7 +253,7 @@ export default class FlowField extends Phaser.Scene {
                         cell.distance
                     );
                 }
-                cell.text.setText(cell.distance + ' ' + cell.occupants);
+                cell.text.setText(cell.distance + " " + cell.occupants);
             }
         }
     }
@@ -260,7 +272,13 @@ export default class FlowField extends Phaser.Scene {
         };
 
         this.world[pathend.y][pathend.x].distance = 0;
-        const toVisit = [this.world[pathend.y][pathend.x]];
+        this.world[pathend.y + 1][pathend.x].distance = 0;
+        this.world[pathend.y - 1][pathend.x].distance = 0;
+        const toVisit = [
+            this.world[pathend.y][pathend.x],
+            this.world[pathend.y + 1][pathend.x],
+            this.world[pathend.y - 1][pathend.x]
+        ];
 
         //for each node we need to visit, starting with the pathEnd
         for (let i = 0; i < toVisit.length; i++) {
@@ -311,7 +329,7 @@ export default class FlowField extends Phaser.Scene {
             this.graphics.fillStyle(monster.color);
             this.graphics.fillCircleShape(monster.sprite);
         }
-        
+
         this.updateLabels();
     }
 }
