@@ -22,7 +22,6 @@ export default function(scene, { tileWidth, tileHeight }) {
 
     const showDebug = function(world) {
         // graphics.clear();
-
         // for (let y = 0; y < ROWS; y++) {
         //     for (let x = 0; x < COLS; x++) {
         //         const point = toWorldPoint(x, y);
@@ -37,7 +36,29 @@ export default function(scene, { tileWidth, tileHeight }) {
         //         }
         //     }
         // }
-
+        // world.rooms.forEach(room => {
+        //     if (!room.map) {
+        //         return;
+        //     }
+        //     const map = room.map;
+        //     for (const col in map) {
+        //         for (const row in map[col]) {
+        //             const destinationPoint = toWorldPoint(col, row);
+        //             circle.setTo(
+        //                 destinationPoint.x,
+        //                 destinationPoint.y,
+        //                 tileHeight / 4
+        //             );
+        //             if (map[col][row].distance > 0) {
+        //                 graphics.fillStyle(
+        //                     0x00ff00,
+        //                     map[col][row].distance / 100
+        //                 );
+        //                 graphics.fillCircleShape(circle);
+        //             }
+        //         }
+        //     }
+        // });
         world.people.forEach(person => {
             const point = toWorldPoint(person.x, person.y);
             if (person.idleTurns > 0) {
@@ -45,7 +66,6 @@ export default function(scene, { tileWidth, tileHeight }) {
                 graphics.fillStyle(0x00ff00);
                 graphics.fillCircleShape(circle);
             }
-
             if (person.destination) {
                 const destinationPoint = toWorldPoint(
                     person.destination.col,
@@ -59,7 +79,6 @@ export default function(scene, { tileWidth, tileHeight }) {
                 );
                 graphics.fillStyle(0x0000ff);
                 graphics.fillCircleShape(circle);
-
                 line.setTo(
                     point.x,
                     point.y,

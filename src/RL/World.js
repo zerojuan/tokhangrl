@@ -1,4 +1,5 @@
 import { COLS, ROWS } from "../constants";
+import { generateDijkstraGridByRoom } from "./FlowfieldGenerator";
 export default class World {
     get level() {
         return this._level;
@@ -85,6 +86,15 @@ export default class World {
 
     occupyTile(position) {
         this._level[position.col][position.row].occupied = true;
+    }
+
+    applyPathfill() {
+        const { rooms } = this;
+        // add generate dijkstra map?
+        rooms.forEach(room => {
+            room.map = generateDijkstraGridByRoom(this, room);
+        });
+        // rooms[0].map = generateDijkstraGridByRoom(this, rooms[0]);
     }
 
     tick() {

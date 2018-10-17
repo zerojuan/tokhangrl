@@ -9,6 +9,12 @@ export default function(person) {
         person.idleTurns = 0;
 
         const destination = person.destination;
+
+        // world should keep an array of destinations
+        // world.getDijkstraFill(destination)
+        // findPath should be dijkstra based now
+        // findPath({person.x,person.y}, dijkstraFillOutput);
+
         const path = findPath(
             {
                 col: person.x,

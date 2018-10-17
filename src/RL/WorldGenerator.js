@@ -118,10 +118,12 @@ function generate() {
     const world = new World({
         level: level,
         people: people,
-        objects: objects,
+        objects: objects, // are immovable but interactible
         hero: hero,
         rooms: rooms
     });
+
+    world.applyPathfill();
     // create target
     // world.setTarget(testPerson);
 

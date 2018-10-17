@@ -228,8 +228,6 @@ class MainScene extends Phaser.Scene {
                 ease: "Power1",
                 duration: 150
             });
-            // this.characters[i].x = person.x * baseTileWidth;
-            // this.characters[i].y = person.y * baseTileHeight;
             this.characters[i].setAlpha(
                 world.level[person.x][person.y].visibility
             );

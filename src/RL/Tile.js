@@ -17,6 +17,10 @@ export default class Tile {
         this.y = y;
     }
 
+    get passable() {
+        return this.value === WALL || this.value === DOOR;
+    }
+
     get description() {
         switch (this.value) {
             case DOOR:
