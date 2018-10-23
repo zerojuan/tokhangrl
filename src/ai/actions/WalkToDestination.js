@@ -1,6 +1,7 @@
 import { BehaviorTreeStatus } from "fluent-behavior-tree";
 
-import { findPath } from "../../RL/Pathfinder";
+// import { findPath } from "../../RL/Pathfinder";
+import { findPath } from "../../RL/FlowfieldGenerator";
 
 export default function(person) {
     return async world => {
@@ -14,21 +15,20 @@ export default function(person) {
         // world.getDijkstraFill(destination)
         // findPath should be dijkstra based now
         // findPath({person.x,person.y}, dijkstraFillOutput);
-
         const path = findPath(
             {
-                col: person.x,
-                row: person.y
+                x: person.x,
+                y: person.y
             },
-            person.destination,
-            world.level
+            person.destination.map,
+            world
         );
 
         if (!path) {
             return BehaviorTreeStatus.Failure;
         }
 
-        if (path.length === 0) {
+        if (path.distance <= 3) {
             return BehaviorTreeStatus.Success;
         }
 
@@ -38,7 +38,10 @@ export default function(person) {
 
         // is position occupied?
         // if (!world.hasPerson(path[0])) {
-        person.moveToPosition(path[0]);
+        person.moveToPosition({
+            row: path.y,
+            col: path.x
+        });
         // }
         // i'm done moving?
         return BehaviorTreeStatus.Running;

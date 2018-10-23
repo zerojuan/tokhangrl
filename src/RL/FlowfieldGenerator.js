@@ -11,7 +11,6 @@ function getNeighbors(v, map) {
         // res.push(new Vector2(v.x, v.y - 1));
     }
 
-    console.log(v);
     if (v.x < COLS - 1) {
         res.push(map[v.x + 1][v.y]); // east
         // res.push(new Vector2(v.x + 1, v.y));
@@ -22,6 +21,13 @@ function getNeighbors(v, map) {
     }
 
     return res;
+}
+
+function findPeopleOnCell(x, y, people) {
+    const m = people.find(monster => {
+        return monster.x === x && monster.y === y;
+    });
+    return m;
 }
 
 export function generateDijkstraGrid(world, { destX, destY, width, height }) {
@@ -92,4 +98,43 @@ export function generateDijkstraGridByRoom(world, room) {
         height: room.height
     });
     return result;
+}
+
+export function findPath(position, map, world) {
+    const currCell = map[position.x][position.y];
+    const people = world.people;
+    // if (currCell.distance === 0) {
+    //     return;
+    // }
+
+    const neighbors = getNeighbors(position, map);
+    let nearestNeighbor = neighbors[0];
+    for (const neighbor of neighbors) {
+        // if there's a monster in the destination, then add high cost to move there
+        const monsterWeight = findPeopleOnCell(neighbor.x, neighbor.y, people)
+            ? 99
+            : 0;
+        const totalDistance = neighbor.distance + monsterWeight;
+        if (totalDistance === 0) {
+            nearestNeighbor = neighbor;
+            break;
+        }
+        if (totalDistance <= nearestNeighbor.distance) {
+            nearestNeighbor = neighbor;
+        }
+    }
+
+    // the nearest neighbor happened to be occupied
+    if (
+        findPeopleOnCell(nearestNeighbor.x, nearestNeighbor.y, people) &&
+        nearestNeighbor.distance <= 3
+    ) {
+        return;
+    }
+
+    return {
+        x: nearestNeighbor.x,
+        y: nearestNeighbor.y,
+        distance: nearestNeighbor.distance
+    };
 }

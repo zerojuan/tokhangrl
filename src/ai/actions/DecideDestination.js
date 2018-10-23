@@ -8,8 +8,12 @@ export default function(person) {
         //     row: Math.floor(Math.random() * 20)
         // };
 
+        const rooms = world.rooms;
+
         // pick a place
-        person.destination = world.rooms[0];
+
+        person.destination =
+            world.rooms[Math.floor(Math.random() * rooms.length)];
 
         // decide destination based on status of the world
 
