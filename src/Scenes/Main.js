@@ -177,7 +177,7 @@ class MainScene extends Phaser.Scene {
 
     debug(show) {
         if (show) {
-            this.debugHelper.showDebug(this.world);
+            this.debugHelper.showDebug(this.world, this.mouseX, this.mouseY);
         } else {
             this.debugHelper.hideDebug();
         }

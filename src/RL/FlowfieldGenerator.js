@@ -42,7 +42,7 @@ export function generateDijkstraGrid(world, { destX, destY, width, height }) {
             map[col].push({
                 x: parseInt(col, 10),
                 y: parseInt(row, 10),
-                distance: tile.passable ? 99 : null
+                distance: tile.passable ? 250 : null
             });
         }
     }
@@ -54,23 +54,14 @@ export function generateDijkstraGrid(world, { destX, destY, width, height }) {
 
     const toVisit = [];
 
-    for (let startX = 0; startX < width; startX++) {
-        for (let startY = 0; startY < height; startY++) {
+    for (let startX = 0; startX < width - 1; startX++) {
+        for (let startY = 0; startY < height - 1; startY++) {
             if (map[destX + startX][destY + startY].distance === null) {
                 map[destX + startX][destY + startY].distance = 0;
                 toVisit.push(map[destX + startX][destY + startY]);
             }
         }
     }
-    // this.world[pathend.y][pathend.x].distance = 0;
-    // this.world[pathend.y + 1][pathend.x].distance = 0;
-    // this.world[pathend.y - 1][pathend.x].distance = 0;
-    // const toVisit = [
-    //     this.world[pathend.y][pathend.x],
-    //     this.world[pathend.y + 1][pathend.x],
-    //     this.world[pathend.y - 1][pathend.x]
-    // ];
-    // const toVisit = [map[pathend.x][pathend.y]];
 
     //for each node we need to visit, starting with the pathEnd
     for (let i = 0; i < toVisit.length; i++) {
@@ -125,9 +116,14 @@ export function findPath(position, map, world) {
     }
 
     // the nearest neighbor happened to be occupied
+    const isOccupied = findPeopleOnCell(
+        nearestNeighbor.x,
+        nearestNeighbor.y,
+        people
+    );
     if (
-        findPeopleOnCell(nearestNeighbor.x, nearestNeighbor.y, people) &&
-        nearestNeighbor.distance <= 3
+        isOccupied // &&
+        // nearestNeighbor.distance <= 3
     ) {
         return;
     }

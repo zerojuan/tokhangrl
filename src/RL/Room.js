@@ -192,4 +192,15 @@ export default class Room {
             }
         }
     }
+
+    debug(graphics, rect, tileWidth, tileHeight) {
+        rect.setTo(
+            this._x * tileWidth,
+            this._y * tileHeight,
+            this._width * tileWidth,
+            this._height * tileHeight
+        );
+        graphics.fillStyle(0x0000ff, 0.2);
+        graphics.fillRectShape(rect);
+    }
 }
