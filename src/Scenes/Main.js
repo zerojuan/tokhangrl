@@ -161,8 +161,6 @@ class MainScene extends Phaser.Scene {
             tileWidth: baseTileWidth,
             tileHeight: baseTileHeight
         });
-
-        this.onCreateDone();
     }
 
     update() {
