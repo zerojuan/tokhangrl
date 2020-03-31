@@ -5,6 +5,7 @@ import { Layout, Affix } from "antd";
 const { Footer, Sider, Content } = Layout;
 
 import ToolControls from "components/ToolControls";
+import LevelEditorSummary from "components/LevelEditorSummary";
 import LevelEditorScene from "../Scenes/LevelEditor";
 
 export default () => {
@@ -27,6 +28,18 @@ export default () => {
         const game = new Phaser.Game(config);
     }, []);
 
+    useEffect(() => {
+        if (levelEditorScene) {
+            levelEditorScene.parentClickHandler = handleClick;
+            levelEditorScene.parentHoverHandler = handleHover;
+
+            return () => {
+                levelEditorScene.parentClickHandler = null;
+                levelEditorScene.parentHoverHandler = null;
+            };
+        }
+    }, [levelEditorScene]);
+
     const handleSetActiveTool = tool => () => {
         if (levelEditorScene) {
             if (tool === "none") {
@@ -38,6 +51,22 @@ export default () => {
             }
         }
     };
+
+    const handleActiveToolParamsChange = params => {
+        if (levelEditorScene) {
+            levelEditorScene.setActiveToolParams(params);
+        }
+    };
+
+    const handleClick = (x, y) => {
+        if (activeTool === "none" || activeTool === null) {
+            return;
+        }
+
+        // put a room in this world
+    };
+
+    const handleHover = (x, y) => {};
 
     return (
         <div>
@@ -61,7 +90,15 @@ export default () => {
                     </Footer>
                 </Layout>
                 <Sider width={275} style={{ background: "none" }}>
-                    <ToolControls activeTool={activeTool} />
+                    <ToolControls
+                        activeTool={activeTool}
+                        onToolParamsChange={handleActiveToolParamsChange}
+                    />
+                    <LevelEditorSummary
+                        levelData={
+                            levelEditorScene ? levelEditorScene.summary : null
+                        }
+                    />
                 </Sider>
             </Layout>
         </div>

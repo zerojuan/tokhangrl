@@ -11,6 +11,8 @@ export default class LevelEditor extends Phaser.Scene {
             key: "LevelEditor"
         });
 
+        this.levelData = {};
+
         this.text = null;
 
         this.mouseX = 0;
@@ -19,9 +21,10 @@ export default class LevelEditor extends Phaser.Scene {
         this.pointer = null;
 
         this.activeTool = null;
+        this.activeToolParams = null;
 
-        this.onClickHandler = null;
-        this.onHoverHandler = null;
+        this.parentClickHandler = null;
+        this.parentHoverHandler = null;
     }
 
     preload() {
@@ -75,22 +78,38 @@ export default class LevelEditor extends Phaser.Scene {
     }
 
     handleHover(mouseX, mouseY) {
-        if (this.onHoverHandler) {
-            this.onHoverHandler(mouseX, mouseY);
+        if (this.parentHoverHandler) {
+            this.parentHoverHandler(mouseX, mouseY);
         }
     }
 
     handleClick(mouseX, mouseY) {
-        if (this.onClickHandler) {
-            this.onClickHandler(mouseX, mouseY);
+        // check if there is an active tool, and what are the parameters of the active tool
+        // activeToolParameters from activeTool object?
+
+        if (this.parentClickHandler) {
+            this.parentClickHandler(mouseX, mouseY);
         }
+    }
+
+    getLevelData() {
+        return this.levelData;
     }
 
     setActiveTool(tool) {
         this.activeTool = tool;
+        this.activeToolParams = {};
+    }
+
+    setActiveToolParams(params) {
+        this.activeToolParams = params;
     }
 
     update() {
         this.text.setText(`Tool: ${this.activeTool}`);
+
+        if (this.activeTool) {
+            this.text.setText(`Width: ${this.activeToolParams.width}`);
+        }
     }
 }
