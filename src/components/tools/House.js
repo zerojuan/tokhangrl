@@ -16,11 +16,11 @@ export default ({ onChange }) => {
     }, [width, height, description]);
 
     const handleWidth = e => {
-        setWidth(e.target.value);
+        setWidth(parseInt(e.target.value));
     };
 
     const handleHeight = e => {
-        setHeight(e.target.value);
+        setHeight(parseInt(e.target.value));
     };
 
     const handleDescription = e => {

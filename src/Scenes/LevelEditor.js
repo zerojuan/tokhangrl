@@ -1,6 +1,20 @@
 import "phaser";
 
-import { BLOCK, BASE_TILE_WIDTH, BASE_TILE_HEIGHT } from "../constants";
+import {
+    WALL,
+    DOOR,
+    DOOR_OPEN,
+    ROAD,
+    DIRT_ROAD,
+    BLOCK,
+    EXIT,
+    BASE_TILE_WIDTH,
+    BASE_TILE_HEIGHT,
+    TOOL_HOUSE,
+    TOOL_ROAD,
+    ROWS,
+    COLS
+} from "../constants";
 
 const baseTileWidth = BASE_TILE_WIDTH; //8;
 const baseTileHeight = BASE_TILE_HEIGHT; //12;
@@ -11,7 +25,12 @@ export default class LevelEditor extends Phaser.Scene {
             key: "LevelEditor"
         });
 
-        this.levelData = {};
+        this.levelData = {
+            houses: [],
+            roads: []
+        };
+
+        this.layer1 = [];
 
         this.text = null;
 
@@ -51,8 +70,27 @@ export default class LevelEditor extends Phaser.Scene {
             repeat: -1
         });
 
+        this.layer1 = [];
+        for (let x = 0; x < COLS; x++) {
+            this.layer1.push([]);
+            for (let y = 0; y < ROWS; y++) {
+                this.layer1[x].push(
+                    this.add
+                        .image(
+                            x * baseTileWidth,
+                            y * baseTileHeight,
+                            "atlas",
+                            DIRT_ROAD
+                        )
+                        .setAlpha(0.5)
+                        .setOrigin(0, 0)
+                        .setTint(0x00ff00)
+                );
+            }
+        }
+
         this.text = this.add
-            .text(120, 50, "What", {
+            .text(50, 20, "What", {
                 font: "bold 19px Arial",
                 fill: "#fff"
             })
@@ -86,6 +124,18 @@ export default class LevelEditor extends Phaser.Scene {
     handleClick(mouseX, mouseY) {
         // check if there is an active tool, and what are the parameters of the active tool
         // activeToolParameters from activeTool object?
+        if (this.activeTool === TOOL_HOUSE) {
+            // create a house here
+            const house = {
+                startX: mouseX,
+                startY: mouseY,
+                width: this.activeToolParams.width,
+                height: this.activeToolParams.height
+            };
+            console.log("Add house:", house);
+            this.levelData.houses.push(house);
+        } else if (this.activeTool === TOOL_ROAD) {
+        }
 
         if (this.parentClickHandler) {
             this.parentClickHandler(mouseX, mouseY);
@@ -107,6 +157,19 @@ export default class LevelEditor extends Phaser.Scene {
 
     update() {
         this.text.setText(`Tool: ${this.activeTool}`);
+
+        // render houses
+        this.levelData.houses.forEach(house => {
+            for (let x = house.startX; x < house.startX + house.width; x++) {
+                for (
+                    let y = house.startY;
+                    y < house.startY + house.height;
+                    y++
+                ) {
+                    this.layer1[x][y].setTexture("atlas", BLOCK);
+                }
+            }
+        });
 
         if (this.activeTool) {
             this.text.setText(`Width: ${this.activeToolParams.width}`);

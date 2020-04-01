@@ -4,6 +4,8 @@ import "phaser";
 import { Layout, Affix } from "antd";
 const { Footer, Sider, Content } = Layout;
 
+import { TOOL_HOUSE, TOOL_ROAD } from "../constants";
+
 import ToolControls from "components/ToolControls";
 import LevelEditorSummary from "components/LevelEditorSummary";
 import LevelEditorScene from "../Scenes/LevelEditor";
@@ -77,10 +79,10 @@ export default () => {
                     </Content>
                     <Footer style={{ padding: "6px 6px" }}>
                         <div>
-                            <button onClick={handleSetActiveTool("house")}>
+                            <button onClick={handleSetActiveTool(TOOL_HOUSE)}>
                                 House
                             </button>
-                            <button onClick={handleSetActiveTool("road")}>
+                            <button onClick={handleSetActiveTool(TOOL_ROAD)}>
                                 Road
                             </button>
                             <button onClick={handleSetActiveTool("none")}>

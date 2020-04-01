@@ -34,3 +34,6 @@ export const OBJECT_LEVEL_ACTION = "objectLevelAction";
 
 export const BASE_TILE_WIDTH = 16;
 export const BASE_TILE_HEIGHT = 16;
+
+export const TOOL_HOUSE = "house";
+export const TOOL_ROAD = "road";
