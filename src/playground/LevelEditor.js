@@ -13,6 +13,7 @@ import LevelEditorScene from "../Scenes/LevelEditor";
 export default () => {
     const [levelEditorScene, setLevelEditorScene] = useState(null);
     const [activeTool, setActiveTool] = useState(null);
+    const [levelData, setLevelData] = useState(null);
 
     useEffect(() => {
         const _levelEditorScene = new LevelEditorScene();
@@ -61,11 +62,10 @@ export default () => {
     };
 
     const handleClick = (x, y) => {
+        setLevelData(levelEditorScene.levelData);
         if (activeTool === "none" || activeTool === null) {
             return;
         }
-
-        // put a room in this world
     };
 
     const handleHover = (x, y) => {};
@@ -97,9 +97,7 @@ export default () => {
                         onToolParamsChange={handleActiveToolParamsChange}
                     />
                     <LevelEditorSummary
-                        levelData={
-                            levelEditorScene ? levelEditorScene.summary : null
-                        }
+                        levelData={levelData ? levelData : null}
                     />
                 </Sider>
             </Layout>

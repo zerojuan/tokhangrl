@@ -2,18 +2,18 @@ import React, { useState, useEffect } from "react";
 
 import { Input } from "antd";
 
-export default ({ onChange }) => {
-    const [width, setWidth] = useState(1);
-    const [height, setHeight] = useState(2);
-    const [description, setDescription] = useState("");
+export default ({ width = 3, height = 3, description = "", id, onChange }) => {
+    const [_width, setWidth] = useState(width);
+    const [_height, setHeight] = useState(height);
+    const [_description, setDescription] = useState(description);
 
     useEffect(() => {
         onChange({
-            width,
-            height,
-            description
+            width: _width,
+            height: _height,
+            description: _description
         });
-    }, [width, height, description]);
+    }, [_width, _height, _description]);
 
     const handleWidth = e => {
         setWidth(parseInt(e.target.value));
@@ -30,19 +30,20 @@ export default ({ onChange }) => {
     return (
         <div>
             <h1>House</h1>
+            {id ? <div>ID: {id}</div> : ""}
             <div>
                 <Input
-                    value={width}
+                    value={_width}
                     addonBefore="Width"
                     onChange={handleWidth}
                 />
                 <Input
-                    value={height}
+                    value={_height}
                     addonBefore="Height"
                     onChange={handleHeight}
                 />
                 <Input
-                    value={description}
+                    value={_description}
                     addonBefore="Description"
                     onChange={handleDescription}
                 />

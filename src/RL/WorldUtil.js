@@ -27,6 +27,12 @@ function getNeighbors({ x, y }, level) {
     return neighbors;
 }
 
+export function generateID() {
+    return Math.random()
+        .toString(36)
+        .substring(7);
+}
+
 export function oppositesFree({ x, y }, level) {
     const neighbors = getNeighbors({ x, y }, level);
     let openCount = 0;
@@ -110,12 +116,26 @@ export function isMiddle({ x, y }, level) {
 
 export function doesRoomOverlap(roomA, roomB) {
     function overlaps(r1, r2) {
-        return (
-            r1.x <= r2.x &&
-            r1.x + r1.width >= r2.x + r2.width &&
-            r1.y <= r2.y &&
-            r1.y + r1.height >= r2.y + r2.height
-        );
+        const rect1 = {
+            x1: r1.x,
+            y1: r1.y,
+            x2: r1.x + (r1.width - 1),
+            y2: r1.y + (r1.height - 1)
+        };
+        const rect2 = {
+            x1: r2.x,
+            y1: r2.y,
+            x2: r2.x + (r2.width - 1),
+            y2: r2.y + (r2.height - 1)
+        };
+        if (rect1.x1 > rect2.x2 || rect2.x1 > rect1.x2) {
+            return false;
+        }
+
+        if (rect1.y1 > rect2.y2 || rect2.y1 > rect1.y2) {
+            return false;
+        }
+        return true;
     }
 
     return overlaps(roomA, roomB) || overlaps(roomB, roomA);
