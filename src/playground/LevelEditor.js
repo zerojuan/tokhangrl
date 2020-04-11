@@ -62,7 +62,8 @@ export default () => {
     };
 
     const handleClick = (x, y) => {
-        setLevelData(levelEditorScene.levelData);
+        const data = JSON.parse(JSON.stringify(levelEditorScene.levelData));
+        setLevelData(data);
         if (activeTool === "none" || activeTool === null) {
             return;
         }
